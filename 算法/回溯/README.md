@@ -1,0 +1,74 @@
+# 回溯
+## 简介
+回溯本质就是一个**增量构造答案**的过程，这个过程往往使用递归实现。
+
+思路：(回溯三问)
+1. 当前操作是什么?
+2. 子问题是什么?
+3. 下一个子问题是什么?
+
+例题：Leetcode_17: 电话号码的数字组合
+``` javascript
+var letterCombinations = function(digits) {
+    if(!digits) return []
+    const table = ["", "","abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"]
+    const n = digits.length
+    const res = []
+    const dfs = (start, temp) => {
+        if (temp.length === n) {
+            res.push(temp.join(''))
+            return
+        }
+        for (let i = start; i < n; i++) {
+            const num = +digits[i]
+            for (const char of table[num]) {
+                temp.push(char)
+                dfs(i + 1, temp)
+                temp.pop()
+            }
+        }
+    }
+    dfs(0, [])
+    return res
+};
+```
+### 子集型回溯
+两种模板：
+1. 从输入的角度来看：
+- 当前操作：当前的元素选/不选
+- 子问题：从下标`>i`的位置选择子串
+- 下一个子问题：从下标`>i+1`的位置选择子串
+2. 从结果的角度来看：
+- 当前操作：枚举第`i`个元素
+- 子问题：从下标`>i`的位置选择子串
+- 下一个子问题：
+例子：Leetcode_78：子集
+```javascript 
+// 从输入的角度去看
+var subsets = function (nums) {
+    // 当前操作: 对于数组中的当前元素选/不选
+    // 子问题: 查看后续>i中元素
+    // 下一个子问题: 查看后续>i+1中元素
+    const n = nums.length;
+    const res = [];
+    const path = [];
+    const dfs = (i) => {
+        if (i === n) {
+            res.push(path.slice())
+            return
+        }
+        //当前元素不选 跳过
+        dfs(i + 1)
+        //选择当前元素
+        path.push(nums[i])
+        dfs(i + 1)
+        //恢复现场
+        path.pop()
+    }
+    dfs(0)
+    return res
+};
+```
+```javascript 
+
+```
