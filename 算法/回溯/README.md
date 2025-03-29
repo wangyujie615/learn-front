@@ -70,5 +70,22 @@ var subsets = function (nums) {
 };
 ```
 ```javascript 
-
+var subsets2 = function (nums) {
+    //从输出的角度看
+    // 当前操作: 枚举选那个元素
+    // 子问题: 
+    // 下一个子问题: 查看后续>i+1中元素
+    const n = nums.length;
+    const res = [];
+    const dfs = (start, path) => {
+        res.push(path.slice())
+        for (let i = start; i < n; i++) {
+            path.push(nums[i])
+            dfs(i + 1, path)
+            path.pop()
+        }
+    }
+    dfs(0, [])
+    return res
+};
 ```
