@@ -1,0 +1,104 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+}
+h1 {
+  font-size: 4rem;
+  color: #fff;
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.btn {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 50%;
+  top: 40%;
+  transform: translateX(-50%);
+  text-decoration: none;
+  color: #fff;
+  border: #fff solid 0.2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  width: 15rem;
+  padding: 1.5rem;
+}
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #333;
+}
+.container .split {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+}
+.container .split.left {
+  left: 0;
+  background: url(ps.jpg) no-repeat center center / cover;
+}
+.container .split.left::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(87, 84, 236, 0.7);
+}
+.container .split.right {
+  right: 0;
+  background: url(xbox.jpg) no-repeat center center / cover;
+}
+.container .split.right::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(43, 43, 43, 0.8);
+}
+.split.left .btn:hover {
+  background-color: #5754ec;
+  border-color: #5754ec;
+}
+.split.right .btn:hover {
+  background-color: #1c7a1c;
+  border-color: #1c7a1c;
+}
+.hover-left .left {
+  width: 75%;
+}
+.hover-left .right {
+  width: 25%;
+}
+.hover-right .left {
+  width: 25%;
+}
+.hover-right .right {
+  width: 75%;
+}
+.split.right,
+.split.left,
+.split.right::before,
+.split.left::before {
+  transition: all 1000ms ease-in-out;
+}
+@media (max-width: 800px) {
+  h1 {
+    font-size: 2rem;
+    top: 30%;
+  }
+  .btn {
+    padding: 1.2rem;
+    width: 12rem;
+  }
+}

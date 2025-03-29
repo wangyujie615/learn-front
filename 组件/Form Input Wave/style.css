@@ -1,0 +1,81 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #0e72c9;
+}
+body .container {
+  padding: 20px 40px;
+  background-color: #021244;
+  border-radius: 5px;
+}
+body .container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+body .container a {
+  text-decoration: none;
+  color: lightblue;
+}
+body .container .btn {
+  cursor: pointer;
+  width: 100%;
+  background-color: lightblue;
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 0;
+  display: inline-block;
+}
+body .container .btn:focus {
+  outline: 0;
+}
+body .container .btn:active {
+  transform: scale(0.98);
+}
+body .container .text {
+  margin-top: 30px;
+}
+body .container .form-control {
+  position: relative;
+  margin: 20px 0 40px;
+  width: 300px;
+}
+body .container .form-control input {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px #fff solid;
+  width: 100%;
+  padding: 15px 0;
+  color: #fff;
+  font-size: 18px;
+  z-index: 100;
+  position: relative;
+}
+body .container .form-control input:focus,
+body .container .form-control input:valid {
+  outline: 0;
+  border-bottom-color: lightblue;
+}
+body .container .form-control label {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  pointer-events: none;
+}
+.form-control label span {
+  display: inline-block;
+  font-size: 18px;
+  min-width: 5px;
+  transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.form-control input:focus ~ label span,
+.form-control input:valid ~ label span {
+  color: lightblue;
+  transform: translateY(-30px);
+}

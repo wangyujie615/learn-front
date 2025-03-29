@@ -1,0 +1,25 @@
+*{
+    box-sizing: border-box;
+}
+body{
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+}
+.bg{
+    background: url(https://cdn.pixabay.com/photo/2021/11/26/20/45/lantern-6826691_1280.jpg) no-repeat center center/cover;
+    position: absolute;
+    top:-30px;
+    left: -30px;
+    height: calc(100vh + 60px);
+    width: calc(100vw + 60px);
+    filter: blur(0); //为页面添加高斯模糊
+    z-index: -1; //盒子在当前层叠上下文中的层叠等级。
+}
+.loading-text{
+    font-size: 50px;
+    color: #fff;
+}

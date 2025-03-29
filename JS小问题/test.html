@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript 富文本编辑器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .toolbar {
+      margin-bottom: 10px;
+    }
+    .toolbar button {
+      margin-right: 5px;
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .editor {
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-height: 200px;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>JavaScript 富文本编辑器</h1>
+  <div class="toolbar">
+    <button onclick="execCommand('bold')"><b>B</b></button>
+    <button onclick="execCommand('italic')"><i>I</i></button>
+    <button onclick="execCommand('underline')"><u>U</u></button>
+    <button onclick="execCommand('justifyLeft')">左对齐</button>
+    <button onclick="execCommand('justifyCenter')">居中</button>
+    <button onclick="execCommand('justifyRight')">右对齐</button>
+    <button onclick="insertLink()">插入链接</button>
+    <button onclick="insertImage()">插入图片</button>
+    <button onclick="execCommand('undo')">撤销</button>
+    <button onclick="execCommand('redo')">重做</button>
+  </div>
+  <div id="editor" class="editor" contenteditable="true"></div>
+
+  <script>
+    // 执行命令
+    function execCommand(command, value = null) {
+      document.execCommand(command, false, value);
+    }
+
+    // 插入链接
+    function insertLink() {
+      const url = prompt('请输入链接地址:', 'https://');
+      if (url) {
+        execCommand('createLink', url);
+      }
+    }
+
+    // 插入图片
+    function insertImage() {
+      const url = prompt('请输入图片地址:', 'https://');
+      if (url) {
+        const img = document.createElement('img');
+        img.src = url;
+        document.getElementById('editor').appendChild(img);
+      }
+    }
+  </script>
+</body>
+</html>

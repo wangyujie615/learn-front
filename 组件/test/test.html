@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浮动标签示例</title>
+    <style>
+        /* 容器样式 */
+        .form-control {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        /* 输入框样式 */
+        .form-control input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        /* 标签样式 */
+        .form-control label {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #999;
+            pointer-events: none;
+            transition: 0.3s ease;
+        }
+
+        /* 输入框聚焦时标签上移 */
+        .form-control input:focus ~ label,
+        .form-control input:valid ~ label {
+            /* 聚焦时 标签向上移动 字体缩小变色*/
+            top: 0;
+            font-size: 12px;
+            color: #3498db;
+            background: white;
+            padding: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-control">
+        <input type="text" id="username" required>
+        <label for="username">用户名</label>
+    </div>
+</body>
+</html>
