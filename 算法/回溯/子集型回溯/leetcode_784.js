@@ -8,7 +8,6 @@ var letterCasePermutation = function (s) {
     const n = s.length;
     const cur = s.split('');
     const res = [];
-    const path = [];
     const dfs = (i) => {
         if (i === n) {
             res.push(cur.join(''))
