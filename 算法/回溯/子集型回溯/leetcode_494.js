@@ -5,7 +5,7 @@
  * @return {number}
  */
 var findTargetSumWays = function (nums, target) {
-    // 从输入的角度
+    // 从输入的角度 O(2^n)
     // 操作：选择当前的元素添加负号
     const n = nums.length
     let count = 0
@@ -30,7 +30,7 @@ var findTargetSumWays = function (nums, target) {
 };
 
 var findTargetSumWays2 = function (nums, target) {
-    // 从输出的角度观察
+    // 从输出的角度观察 O(2^n)
     // 操作：枚举第i个元素添加负号 添加负号是具备一定的条件的
     const n = nums.length
     let sum = nums.reduce((pre, cur) => pre + cur)
