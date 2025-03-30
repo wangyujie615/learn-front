@@ -99,3 +99,4 @@ var subsets2 = function (nums) {
 | Leetcode_2397   | 被列覆盖的最多行数        |   |
 | Leetcode_1239   | 串联字符串的最大长度        |   |
 | Leetcode_2212   | 射箭比赛中的最大得分       |   |
+| Leetcode_1255   | 得分最高的单词集合       |   |
