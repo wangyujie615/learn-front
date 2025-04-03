@@ -15,6 +15,7 @@ var partition = function (s) {
         return true
     }
     /**
+     * 由于子串要清楚开始的位置和结束的位置 类似与双指针的思路
      * @param {*} i 
      * @param {*} start 下一个子串开始的位置 
      * @returns 
@@ -24,7 +25,7 @@ var partition = function (s) {
             res.push(path.slice())
             return
         }
-        //不选i和i+1之间的逗号 不选的区间[0,n-2]
+        //不选i和i+1之间的逗号 不选的区间[0,n-2] 开始位置保持不变
         if (i < n - 1) {
             dfs(i + 1, start)
         }
@@ -32,6 +33,7 @@ var partition = function (s) {
         if (isHuiWen(s, start, i)) {
             path.push(s.substring(start, i + 1))
             dfs(i + 1, i + 1)
+            //这里为什么要恢复现场 "aa" "ac" "ad"
             path.pop()
         }
     }
@@ -69,3 +71,4 @@ var partition2 = function (s) {
     dfs(0)
     return res
 };
+
