@@ -1,0 +1,10 @@
+# 手写相关
+1. 发布订阅设计模式
+2. `new`关键字
+3. `Object.create()` 
+4. Promise.all()
+5. Promise.race()
+6. 深拷贝
+7. 防抖
+8. 节流
+9. 数组扁平化
