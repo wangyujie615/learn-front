@@ -123,7 +123,7 @@ var subsets2 = function (nums) {
 | Leetcode_77   | 组合        |   |
 | Leetcode_216 | 组合总和 | HOT100  |
 | Leetcode_22 | 括号生成| HOT100 |
-| Leetcode_301 | 删除无效括号|  |
+| Leetcode_301 | 删除无效括号| 未作 |
 
 
 
