@@ -9,9 +9,12 @@ var findMinimumTime = function (strength, k) {
     const open = Array(n).fill(false)
     let ans = Infinity
     const dfs = (i, time) => {
+        if (time >= ans) {
+            return; // 剪枝
+        }
         if (i === n) {
-            ans = time
-            return
+            ans = time;
+            return;
         }
         const x = 1 + k * i;
         for (let j = 0; j < n; j++) {
