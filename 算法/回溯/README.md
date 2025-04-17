@@ -128,9 +128,31 @@ var subsets2 = function (nums) {
 
 
 ### 排列型回溯
-排列型回溯：
+排列型回溯：模板参考下
 ```
-
+var permute = function (nums) {
+    const res = [], path = []
+    //1.
+    const visited = new Array(nums.length).fill(false)
+    const dfs = () => {
+        if (path.length === nums.length) {
+            res.push(path.slice())
+            return
+        }
+        //2.
+        for (let i = 0; i < nums.length; i++) {
+            if (!visited[i]) {
+                path.push(nums[i])
+                visited[i] = true
+                dfs(i + 1)
+                visited[i] = false
+                path.pop()
+            }
+        }
+    }
+    dfs()
+    return res
+};
 ```
 
 相关例题：
