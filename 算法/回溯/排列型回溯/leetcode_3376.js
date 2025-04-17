@@ -13,6 +13,7 @@ var findMinimumTime = function (strength, k) {
             return; // 剪枝
         }
         if (i === n) {
+            //表示三把锁都开完
             ans = time;
             return;
         }
