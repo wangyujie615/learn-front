@@ -29,7 +29,7 @@ function DeepClone(obj, map = new WeakMap()) {
     }
     const arr = Array.isArray(obj) ? [] : {};
     map.set(obj, arr)
-    for (const p of obj) {
+    for (const p in obj) {
         if (obj.hasProperty(p)) {
             arr[p] = DeepClone(obj[p], map)
         }
