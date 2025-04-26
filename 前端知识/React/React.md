@@ -1,10 +1,36 @@
 # React
+
 React由Meta公司研发，是一个用于构建web和原生交互界面的库。
+
+## 简介
+
+**特点：**
+
+- `JSX`语法
+- 单向数据绑定：数据只能由父组件向子组件流动
+- 声明式编程
+- 组件设计模式
 
 **优势：**
 
 + 与传统基于DOM开发：组件化的开发方式、不错的性能
 + 相较于其他前端框架：丰富的生态、跨平台支持
+
+### 单向数据绑定
+
+单向数据流：数据只能从父组件传向子组件
+
+具体来说，`React`数据分为两类：
+
+- `Props`：由父组件传递给子组件的**只读**属性，不能在子组件中修改；
+- `State`：组件内部维护的可变状态，可以通过`setState()`方法进行修改。
+
+**why?**
+
+1. 易于理解和调试，双向数据绑定会导致数据流不稳定
+2. 更好的性能表现，双向数据绑定中，数据发生变化时，系统需要同时更新视图和数据模型。单向数据流中，**数据的更新只会从父组件到子组件，避免不必要的视图更新**。
+3. 更好的逻辑控制，数据的更改只能由父组件或本身进行。双向的数据绑定，数据的更新可能来自多个组件，数据不可预测。
+4. 跟容易实现服务端渲染。
 
 ## 开发环境的搭建
 create-react-app：是一个快速创建React开发环境的工具，底层由Webpac构建，封装了配置细节，开箱即用。
@@ -16,22 +42,60 @@ npx create-react-app react-basic
 3.react-basic：react项目的名称(自定义)
 ```
 
-## JSX
+## 虚拟DOM和真实DOM
+
+### 真实DOM
+
+真实DOM：原生的JS的DOM对象就是真实DOM
+
+**缺陷**：
+
+- **性能开销大**：**频繁的`DOM`操作会导致浏览器重新计算布局和重绘，每次更改浏览器都会去计算**。
+- 开发复杂度高：**维护成本高**。
+- **跨平台支持**：**真实`DOM`只支持浏览器**。
+
+### 虚拟DOM
+
+`Real DOM`，真实 `DOM`，意思为文档对象模型，是一个结构化文本的抽象，在页面渲染出的每一个结点都是一个真实 `DOM` 结构
+
+`Virtual Dom`**，本质上是以** `JavaScript` **对象形式**存在的对 `DOM` **的描述**
+
+创建虚拟 `DOM` 目的：就是为了**更好将虚拟的节点渲染到页面视图中，虚拟** `DOM` **对象的节点与真实** `DOM` **的属性一一照应**
+
+`JSX`**：**在 `JS` **中通过使用** `XML` **的方式去直接声明界面的** `DOM` 结构是 **JavaScript XML**的缩写，是一种 `JavaScript`的语法扩展，允许在 `JavaScript` 代码中编写类似 `HTML` 的结构
+
+### 虚拟DOM和真实DOM的区别
+
+|特性|真实DOM|虚拟DOM|
+|:-:|:-:|:-:|
+|定义|浏览器中的实际文档对象模型|真实 DOM 的轻量级JavaScript抽象表示|
+|操作方式|直接通过 JavaScript 操作|通过框架（如 React）间接操作|
+|**性能**|操作性能低，**频繁操作会导致重排和重绘**(引申到浏览器的过程)|操作性能高，**通过 Diff 算法减少DOM操作**|
+|**更新机制**|**同步更新(修改一次更新一次)**|**异步更新，合并多次更新(进行批处理合并更新)**|
+|开发复杂度|手动操作DOM，开发复杂|自动更新 DOM，开发简单|
+|**跨平台支持**|仅支持浏览器|**支持多种平台（Web、移动端、桌面端）**|
+
+### JSX
+
 概念：JSX是JS和XML的缩写，表示在JS代码中编写HTML模板结构，它是React中编写UI模板的方式。
 
 优势：
 
 + HTML的声明式模板写法
 + JS的可编程能力
-### JSX的本质和流程
+
+#### JSX的本质和流程
+
 **JSX的本质**：JSX并不是标准的JS语法，它是**JS的语法扩展**，浏览器本身不能识别，需要**通过解析工具做解析后才能在浏览器中运行**。JSX虽然看起来很像HTML，但在**底层其实被转化为了 JavaScript 对象**，你不能在一个函数中返回多个对象，除非用一个数组把他们包装起来。这就是为什么多个JSX标签必须要用一个父元素或者Fragment来包裹。
 
 **JSX的转换的流程**：
+
 ![image-20250426185934336](../img/image-20250426185934336.png)
 
+#### JSX规则
 
-### JSX规则
-#### 只能返回一个根元素
+##### 只能返回一个根元素
+
 如果想要在一个组件包含多个元素，需要**使用一个父标签把他们包裹起来**。
 
 
@@ -63,7 +127,8 @@ or
 </>
 ```
 
-#### 标签必须闭合
+##### 标签必须闭合
+
 <font style="color:rgb(255, 100,50);">**JSX 要求标签必须正确闭合(自闭和或对标签闭合)**。</font>
 
 ```jsx
@@ -81,10 +146,11 @@ or
 </>
 ```
 
-#### 使用驼峰式命名法给大部分属性命名
+##### 使用驼峰式命名法给大部分属性命名
+
 <font style="color:rgb(255, 100, 47);">在React中，大部分HTML和SVG属性都用驼峰式命名法表示。例如，需要用</font>`strokeWidth`<font style="color:rgb(255, 139, 47);"> 代替</font>`stroke-width`<font style="color:rgb(255, 139, 47);">。由于</font>`class`<font style="color:rgb(255, 139, 47);">是一个保留字，所以在 React 中需要用 </font>`className`<font style="color:rgb(255, 139, 47);"> 来代替。</font>
 
-### JSX中使用JS表达式
+#### JSX中使用JS表达式
 在JSX中可以通过**大括号语法**识别JS中的**表达式**，比如常见的变量、函数调用、方法调用等等。
 
 + 使用引号传递字符串
@@ -119,7 +185,7 @@ function App() {
 }
 ```
 
-### JSX中实现列表渲染
+#### JSX中实现列表渲染
 语法：在`JSX`中可以使用原生JS中的**`map`方法**遍历渲染列表
 
 注意：加上一个独一无二的值，字符串或者`number`，`react`框架内部使用用于提升列表的更新性能。
@@ -144,7 +210,7 @@ function App() {
 }
 ```
 
-### JSX中实现条件渲染
+#### JSX中实现条件渲染
 语法：在React中，可以通过**逻辑与运算符`&&`**、**三元表达式(`?:`)、复杂条件渲染**实现基础的条件渲染。
 
 ```jsx
@@ -178,7 +244,7 @@ function App() {
 }
 ```
 
-### JSX实现基础事件绑定
+#### JSX实现基础事件绑定
 ```jsx
 function App() {
   const handClick = ()=>{
@@ -196,7 +262,7 @@ function App() {
 }
 ```
 
-#### 事件参数的获取
+##### 事件参数的获取
 ```jsx
 function App() {
   //e:事件参数
@@ -215,7 +281,7 @@ function App() {
 }
 ```
 
-#### 传递自定义参数
+##### 传递自定义参数
 语法：**事件绑定的位置改造为箭头函数的写法**，在执行handClick实际业务处理函数时候传递实参。
 
 注：这里是一个箭头函数的写法，而**不是直接使用引用**。
@@ -236,10 +302,9 @@ function App() {
     </div>
   );
 }
-
 ```
 
-#### 同时传递自定义参数和事件参数
+##### 同时传递自定义参数和事件参数
 语法：在**事件绑定的位置传递事件实参e和自定义参数**，handClick中声明形参，注意顺序对应。
 
 ```jsx
@@ -261,6 +326,7 @@ function App() {
 ```
 
 ## 组件
+
 概念：一个组件就是用户界面的一部分，它可以有自己的逻辑和外观，组件之间可以互相嵌套，也可以重复使用多次。![](https://cdn.nlark.com/yuque/0/2024/png/43189118/1735043244942-bf765a3f-57e1-4609-abf1-799425739258.png)
 
 在React中，一个**组件就是首字母大写**的**函数**，内部存放了组件的逻辑和UI，渲染组件**只需要把组件当成标签来写**。
@@ -293,7 +359,223 @@ function App() {
 }
 ```
 
-### 默认导出与具名导出
+### 组件的创建方式
+
+分为三种方式：
+
+- 函数式创建-----函数组件
+- 通过`React.createClass()`方法创建
+- 继承`React.Component`创建
+
+而像函数式创建和类组件创建的区别主要在于需要创建的组件是否需要为有状态组件：
+
+- 对于一些无状态的组件创建，建议使用函数式创建的方式
+- 由于`react hooks`的出现，函数式组件创建的组件通过使用`hooks`方法也能使之成为有状态组件，再加上目前推崇函数式编程，所以这里建议都使用函数式的方式来创建组件
+
+``` jsx
+//1.函数式创建
+function Mybutton(){
+	return (
+		<button>按钮</button>
+	);
+}
+//2.通过React.createClass创建组件
+const MyComponent = React.createClass({
+  // 定义默认 props
+  getDefaultProps: function() {
+    return {
+      name: 'Guest' // 默认 props
+    };
+  },
+
+  // 定义初始 state
+  getInitialState: function() {
+    return {
+      count: 0
+    };
+  },
+
+  // 定义方法
+  handleClick: function() {
+    this.setState({ count: this.state.count + 1 });
+  },
+
+  // 生命周期方法：组件挂载后
+  componentDidMount: function() {
+    console.log('Component did mount!');
+  },
+
+  // 渲染方法
+  render: function() {
+    return (
+      <div>
+        <h1>Hello, {this.props.name}!</h1>
+        <p>Count: {this.state.count}</p>
+        <button onClick={this.handleClick}>Increment</button>
+      </div>
+    );
+  }
+});
+//3.继承`React.Component`创建组件
+class MyComponent extends Component {
+  static defaultProps = {
+    name: 'Guest'
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0
+    };
+  }
+
+  handleClick = () => {
+    this.setState({ count: this.state.count + 1 });
+  };
+
+  componentDidMount() {
+    console.log('Component did mount!');
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Hello, {this.props.name}!</h1>
+        <p>Count: {this.state.count}</p>
+        <button onClick={this.handleClick}>Increment</button>
+      </div>
+    );
+  }
+}
+```
+
+### 类组件和函数组件
+
+**类组件**：
+
+- 也就是通过使用`ES6`**类的编写形式去编写组件**，该类**必须继承**`React.Component`
+
+- 如果想要访问父组件传递过来的参数，可通过`this.props`的方式去访问
+
+- 在组件中**必须实现**`render`**方法**，在`return`中返回`React`对象
+
+**函数组件**：就是通过**函数编写的形式**去实现一个`React`组件，是`React`中定义组件最简单的方式
+
+#### 生命周期(重点)
+
+**类组件的生命周期：**
+
+- 装载阶段
+  - `constructor`: **构造函数**，在组件**初始化的时候触发一次**。用于**设置初始化状态(`State`)，绑定成员函数上下文引用**。
+  - `static getDerivedStateFromProps`:该函数会在**组件实例化**后和**重新渲染**前调用（生成 VirtualDOM 之后，实际 DOM 挂载之前），意味着无论是**父组件的更新、`props` 的变化或通过 `setState` 更新组件内部的 State都会被调用**。可以用于比较`props`和`state`来加一些限制条件，放置无用的`state`更新。
+  - `render`:**渲染函数**，用于**渲染**`DOM`**结构**，可以访问组件`state`与`prop`属性
+  - `componentDidMount`:组件挂载到真实`DOM`节点后执行，其在`render`方法之后执行，此方法**多用于执行一些数据获取，事件监听**等操作
+- 更新阶段
+  - `static getDerivedStateFromProps`:该函数会在**组件实例化**后和**重新渲染**前调用（生成 VirtualDOM 之后，实际 DOM 挂载之前），意味着无论是**父组件的更新、`props` 的变化或通过 `setState` 更新组件内部的 State都会被调用**。可以用于比较`props`和`state`来加一些限制条件，放置无用的`state`更新。
+  - `shouldComponentUpdate`:**用于告知组件本身基于当前的**`props`**和**`state`**是否需要重新渲染组件**，默认情况返回`true`
+  - `render`: **渲染函数**，用于**渲染**`DOM`**结构**，可以访问组件`state`与`prop`属性
+  - `getSnapshotBeforeUpdate`:该方法返回的一个`Snapshot`值，作为`componentDidUpdate`第三个参数传入。此方法的目的**在于获取组件更新前的一些信息**，比如组件的滚动位置之类的，在组件更新后可以根据这些信息**恢复**一些UI视觉上的状态
+  - `componentDidUpdate`:在该方法中，可以根据前后的`props`和`state`的变化做相应的操作，如**获取数据，修改**`DOM`**样式**等
+- 卸载阶段
+  - `componentDidUpdate`:此方法用于**组件卸载前**，**清理一些注册是监听事件，或者取消订阅的网络请求**等，一旦一个组件实例被卸载，其不会被再次挂载，而只可能是被重新创建
+
+|![](../img/image-20250426193802379.png)|
+|:-:|
+
+**函数组件的生命周期：**理论上函数组件是没有生命周期这个概念的，但是可以通过`useEffect`钩子函数实现对生命周期的模拟
+```jsx
+//利用useEffect实现
+//1.装载
+useEffect(()=>{},[])
+//2.更新
+useEffect(()=>{},[不为空])
+//3.卸载
+useEffect(()=>{
+  return ()=>{
+    //清理函数
+  }
+},[])
+```
+
+### 受控组件和非受控组件
+
+**受控组件**：组件的状态（例如输入字段的值）完全受控于 `React` 组件的 `state` 或 `props`。这意味着组件的值和状态由 `React` 进行管理和更新。
+
+```jsx
+import React, { useState } from 'react';
+
+function ControlledInput() {
+  //state绑定对应的组件
+  const [value, setValue] = useState('');
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert(`Submitted value: ${value}`);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Controlled Input:
+        <input type="text" value={value} onChange={handleChange} />
+      </label>
+      <button type="submit">Submit</button>
+      <p>Current value: {value}</p>
+    </form>
+  );
+}
+
+export default ControlledInput;
+```
+
+适用的场景：需要动态更新、表单验证、实时计算（如搜索框自动补全）。
+
+**非受控组件**：`DOM` 元素的值和状态不受 `React` 控制，而是由`DOM`元素本身管理。一般情况是在初始化的时候接受外部数据，然后自己在内部存储其自身状态。
+
+当需要时，可以使用`ref` 查询 `DOM`并查找其当前值。
+
+```jsx
+import React, { useRef } from 'react';
+
+function UncontrolledInput() {
+  const inputRef = useRef(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert(`Submitted value: ${inputRef.current.value}`);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Uncontrolled Input:
+        <input type="text" ref={inputRef} defaultValue="Initial Value" />
+      </label>
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+export default UncontrolledInput;
+```
+
+适用的场景：适用于简单表单、文件上传 (`<input type="file">`)、第三方库集成
+
+**对比**：
+
+| 特性           | 受控组件                       | 非受控组件                |
+| :-------------: | :-----------------------------: | :------------------------: |
+| **数据管理**   | React `state`                  | DOM                       |
+| **更新方式**   | `onChange` + `setState`        | `ref` 获取值              |
+| **适用场景**   | **需要实时控制输入（如动态校验）** | **简单表单、文件上传**    |
+| **代码复杂度** | 稍高（需要 `onChange` 处理）   | 更简单（直接 `ref` 取值） |
+
+### 默认导出与具名导出---ESM
+
 特点：
 
 + 一个文件有<font style="color:#ECAA04;">且仅有一个默认导出</font>，可以<font style="color:#ED740C;">有任意多个具名导出</font>。
@@ -321,7 +603,6 @@ import {Button} from './Button.js'
 ```jsx
 // 1.行内样式控制
 <div style={style}>{24}</div>
-
 ```
 
 ```jsx
@@ -414,7 +695,16 @@ export default function Father() {
 }
 ```
 
-#### 传递方式
+#### 组件间通信(重要)
+
+根据传送者和接收者可以分为如下：
+
+- 父组件向子组件传递：`props`
+- 子组件向父组件传递：函数回调
+- 兄弟组件之间的通信：父组件作为中间层来实现数据的互通，通过使用父组件传递
+- 父组件向后代组件传递：使用`context`提供了组件之间通讯的一种方式，可以共享数据，其他数据都能读取对应的数据
+- 非关系组件传递：如果组件之间关系类型比较复杂的情况，建议将数据进行一个全局资源管理，从而实现通信，例如`redux`。
+
 ##### 子传父(重要)
 ![](https://cdn.nlark.com/yuque/0/2024/png/43189118/1735125785374-82ce5d29-578a-47bc-a91f-f1f214f51436.png)
 
@@ -584,7 +874,88 @@ function Father() {
 + **<font style="color:rgb(35, 39, 47);">只负责自己的任务。</font>**<font style="color:rgb(35, 39, 47);"> 它不会更改在该函数调用前就已存在的对象或变量。</font>
 + **<font style="color:rgb(35, 39, 47);">输入相同，则输出相同。</font>**<font style="color:rgb(35, 39, 47);"> 给定相同的输入，组件应该总是返回相同的 JSX。</font>
 
-## <font style="color:rgb(35, 39, 47);">useState</font>
+## React的渲染过程
+`React`的渲染流程可以分为2个阶段：**`render()`+`commit()`**
+
+`render()`：主要涉及到`JSX`的编译转换，虚拟DOM的挂载，以及Diff算法进行匹配
+
+
+
+注意点：
+
+- `render()`：`vdom->fiber`
+- `vdom`中只包含`children`用于链接子节点
+- `fiber`中包含`child、sibling、return`属性来关联父子、兄弟节点。
+- `commit`：`before mutation、mutation、layout`
+- `mutation`：具体操作`dom`的
+- `layout`：`ref`更新就是在这个阶段
+
+![image-20250426202755317](../img/image-20250426202755317.png)
+
+#### render阶段
+
+##### `React.render()`方法的原理
+
+首先，`render`函数在`react`中有两种形式：
+
+- 在类组件中，指的是`render`方法
+- 在函数组件中，指的是函数组件本身
+
+在`render`中，我们会编写`jsx`，`jsx`通过`babel`编译后就会转化成我们熟悉的`js`格式
+
+在`render`过程中，**`React` 将新调用的 `render`函数返回的树与旧版本的树进行比较，这一步是决定如何更新 `DOM` 的必要步骤，然后进行 `diff` 比较，更新 `DOM`树**
+
+触发时机：
+
+- 类组件调用 `setState`修改状态
+- 函数组件通过`useState hook`修改状态
+- 类组件重新渲染
+- 函数组件重新渲染
+
+##### `DIff`算法(重点)
+
+|![image-20250426204001257](../img/image-20250426204001257.png)|
+|:-:|
+
+`diff`算法的作用：通过比较新旧的虚拟`dom`，来**找到最小化的`dom`**更新
+
+**`diff`算法的过程**：`diff`算法可以总结为三个策略，分别从**树、组件及元素**三个层面进行复杂度的优化：
+
+- 策略一：忽略节点跨层级操作场景，提升比对效率**（基于树进行对比)**。这一策略需要进行树比对，**即对树进行分层比较**。树比对的处理手法是非常“暴力”的，即两棵树只对同一层次的节点进行比较，**如果发现节点已经不存在了，则该节点及其子节点会被完全删除掉，不会用于进一步的比较，这就提升了比对效率**。
+
+- 策略二：如果组件的 class 一致，则默认为相似的树结构，否则默认为不同的树结构**（基于组件进行对比**）。
+    在组件比对的过程中：
+    
+    - 如果组件是同一类型则进行树比对；
+
+    - 如果不是则直接放入补丁中。
+    
+      只要父组件类型不同，就会被重新渲染。这也就是为什么 shouldComponentUpdate、PureComponent 及 React.memo 可以提高性能的原因。
+    
+- 策略三：同一层级的子节点，可以通过标记 key 的方式进行列表对比**（基于节点进行对比）**。元素比对主要发生在同层级中，通过标记节点操作生成补丁。节点操作包含了插入、移动、删除等。其中节点重新排序同时涉及插入、移动、删除三个操作，所以效率消耗最大，此时策略三起到了至关重要的作用。**通过标记 key 的方式，React 可以直接移动 DOM 节点，降低内耗。**
+
+
+
+###### **`React key`解决的问题和注意事项**
+
+**`Keys` 是 `React` 用于追踪哪些列表中元素被修改、被添加或者被移除的辅助标识。在开发过程中，我们需要保证某个元素的 `key` 在其同级元素中具有唯一性。**
+
+在 `React Diff` 算法中`React `会**借助元素的 `Key` 值来判断该元素是新近创建的还是被移动而来的元素，从而减少不必要的元素重渲染此外，`React` 还需要借助 Key 值来判断元素与本地状态的关联关系。**
+
+注意事项：
+
+- key值一定要和具体的元素一 一对应；
+- **尽量不要用数组的index去作为key；**
+- 不要在render的时候用随机数或者其他操作给元素加上不稳定的key，这样造成的性能开销比不加key的情况下更糟糕。
+
+##### `fiber`节点(重点)
+
+todo
+
+## Hook
+
+### <font style="color:rgb(35, 39, 47);">useState</font>
+
 useState是一个React Hook(函数)，它允许我们向组件添加一个**状态变量**，从而控制影响组件的渲染结果。
 
 本质：和普通JS变量不同的是**，状态变量一旦发生变化组件的试图UI也会跟着变化(数据驱动视图)**。![](https://cdn.nlark.com/yuque/0/2024/png/43189118/1735043752629-1953a800-b5b5-46f1-98ee-1ba9b0dd3ca7.png)
@@ -613,7 +984,7 @@ function App() {
 
 ```
 
-### 修改状态的规则
+#### 修改状态的规则
 在Raect中，useState以及其他以'use'开头的函数都被称为Hook,这种函数**只在React渲染时有效**。状态不可变，在React中状态被认为是只读的，状态只能替换而不能修改它。
 
 特点：
@@ -621,7 +992,8 @@ function App() {
 + **<font style="color:rgb(35, 39, 47);">如果你渲染同一个组件两次，每个副本都会有完全隔离的state</font>**
 + **<font style="color:rgb(35, 39, 47);">state 完全私有于声明它的组件</font>**<font style="color:rgb(35, 39, 47);">。父组件无法更改它。</font>
 
-#### 修改对象状态
+##### 修改对象状态
+
 <font style="color:rgb(35, 39, 47);">每次你的组件渲染时，</font>`useState`<font style="color:rgb(35, 39, 47);"> 都会给你一个包含两个值的数组：</font>
 
 1. **<font style="color:rgb(35, 39, 47);">state 变量</font>**<font style="color:rgb(35, 39, 47);"> (</font>`index`<font style="color:rgb(35, 39, 47);">) 会保存上次渲染的值。</font>
@@ -655,12 +1027,7 @@ function App() {
 }
 ```
 
-:::warning
-查看官方文档对于数组如何设置装填变量
-
-:::
-
-### 受控表单绑定
+#### 受控表单绑定
 概念：使用React组件的状态(useState)控制表单的状态
 
 ![](https://cdn.nlark.com/yuque/0/2024/png/43189118/1735114906530-d759f5c2-3289-4a27-9020-6d3cfcf44634.png)
@@ -678,14 +1045,14 @@ function Inputform(){
 }
 ```
 
-## 渲染和提交
-### 触发一次渲染
+#### 渲染和提交
+##### 触发一次渲染
 有两种原因导致组件的渲染：
 
 + 组件的初次渲染
 + 组件(或者其祖先之一)的状态发生变化
 
-#### 初次渲染
+##### 初次渲染
 <font style="color:rgb(35, 39, 47);">当应用启动时，会触发初次渲染。框架和沙箱有时会隐藏这部分代码，但它是通过</font>**<font style="color:rgb(35, 39, 47);">调用createRoot方法并传入目标DOM节点</font>**<font style="color:rgb(35, 39, 47);">，然后用你的组件调用 </font>`render`<font style="color:rgb(35, 39, 47);"> 函数完成的。</font>
 
 ```jsx
@@ -696,10 +1063,10 @@ const root = createRoot(document.getElementById('root'))
 root.render(<Image />);
 ```
 
-#### 状态更新时渲染
+##### 状态更新时渲染
 <font style="color:rgb(35, 39, 47);">一旦组件被初次渲染，你就可以</font>**<font style="color:rgb(35, 39, 47);">通过使用set函数更新其状态来触发之后的渲染</font>**<font style="color:rgb(35, 39, 47);">。更新组件的状态会自动将一次渲染送入队列。</font>
 
-### <font style="color:rgb(35, 39, 47);">React渲染组件</font>
+#### <font style="color:rgb(35, 39, 47);">React渲染组件</font>
 **<font style="color:rgb(35, 39, 47);">React在调用你的组件。</font>**
 
 + **<font style="color:rgb(35, 39, 47);">在进行初次渲染时,</font>**<font style="color:rgb(35, 39, 47);"> React会调用</font>**<font style="color:rgb(35, 39, 47);">根组件</font>**<font style="color:rgb(35, 39, 47);">。创建对应标签的DOM节点</font>
@@ -707,7 +1074,7 @@ root.render(<Image />);
 
 <font style="color:rgb(35, 39, 47);">这个</font>**<font style="color:rgb(35, 39, 47);">过程是递归的</font>**<font style="color:rgb(35, 39, 47);">：如果更新后的组件会返回某个另外的组件，那么 React 接下来就会渲染 </font>_<font style="color:rgb(35, 39, 47);">那个</font>_<font style="color:rgb(35, 39, 47);"> 组件，而如果那个组件又返回了某个组件，那么 React 接下来就会渲染那个组件，以此类推。这个过程会持续下去，直到没有更多的嵌套组件并且 React 确切知道哪些东西应该显示到屏幕上为止。</font>
 
-### <font style="color:rgb(35, 39, 47);">React将更改提交到DOM上</font>
+#### <font style="color:rgb(35, 39, 47);">React将更改提交到DOM上</font>
 <font style="color:rgb(35, 39, 47);">在渲染（调用）你的组件之后，React 将会修改DOM。</font>
 
 + **<font style="color:rgb(35, 39, 47);">对于初次渲染，</font>**<font style="color:rgb(35, 39, 47);"> React会使用 </font>[<font style="color:rgb(35, 39, 47);">appendChild()</font>](https://developer.mozilla.org/docs/Web/API/Node/appendChild)<font style="color:rgb(35, 39, 47);"> DOM API 将其创建的所有DOM节点放在屏幕上。</font>
@@ -715,10 +1082,9 @@ root.render(<Image />);
 
 **<font style="color:rgb(35, 39, 47);">React仅在渲染之间存在差异时才会更改DOM节点。</font>**
 
-### <font style="color:rgb(35, 39, 47);">游览器绘制</font>
+#### <font style="color:rgb(35, 39, 47);">游览器绘制</font>
 <font style="color:rgb(35, 39, 47);">在渲染完成并且React更新DOM之后，浏览器就会重新绘制屏幕。</font>
 
-## <font style="color:rgb(35, 39, 47);">脱围机制</font>
 ### useRef
 #### 使用ref引用值
 <font style="color:rgb(35, 39, 47);">希望组件“记住”某些信息，但又不想让这些信息触发新的渲染时，可以使用</font>**<font style="color:rgb(35, 39, 47);">ref</font>**<font style="color:rgb(35, 39, 47);">。与state一样，ref在重新渲染之间由React保留。但是，设置state会重新渲染组件，而更改ref不会。</font>**<font style="color:rgb(35, 39, 47);">useRef返回的一个对象</font>**<font style="color:rgb(35, 39, 47);">。</font>
@@ -815,13 +1181,13 @@ useEffect(() => {
 }, []);
 ```
 
-### 无限循环问题
+#### 无限循环问题(重点)
 使用useEffect会产生无限循环问题
 
 产生循环问题的情况：
 
 1. 依赖项为`state`,每次改变就要刷新
-2. 依赖项为对象，数组；这是由于Object.is是浅比较，只会比较地址而不会比较地址所指的的值
+2. 依赖项为对象，数组；**这是由于Object.is是浅比较，只会比较地址而不会比较地址所指的的值**
 3. 依赖项为函数
 
 举个例子：
@@ -851,7 +1217,7 @@ function App() {
 export default App;
 ```
 
-## UseMemo
+### useMemo
 作用：在每次**<font style="color:#ED740C;">重新渲染的时候能够缓存计算的结果</font>**<font style="color:#ED740C;">。消耗非常大的计算才会使用到这个钩子函数</font>
 
 ```jsx
@@ -874,11 +1240,9 @@ function App(){
 
 **返回值：**
 
-<font style="color:rgb(35, 39, 47);">在初次渲染时，</font>`useMemo`<font style="color:rgb(35, 39, 47);"> 返回</font>**<font style="color:#ECAA04;">不带参数调用 </font>**`**<font style="color:#ECAA04;">calculateValue</font>**`**<font style="color:#ECAA04;"> 的结果</font>**<font style="color:rgb(35, 39, 47);">。</font>
+<font style="color:rgb(35, 39, 47);">在初次渲染时，</font>`useMemo`<font style="color:rgb(35, 39, 47);"> 返回</font>**<font style="color:#ECAA04;">不带参数调用 </font>**`<font style="color:#ECAA04;">calculateValue</font>`**<font style="color:#ECAA04;"> 的结果</font>**<font style="color:rgb(35, 39, 47);">。</font>
 
 <font style="color:rgb(35, 39, 47);">在接下来的渲染中，如果依赖项没有发生改变，它将返回上次缓存的值；否则将再次调用 </font>`calculateValue`<font style="color:rgb(35, 39, 47);">，并返回最新结果。</font>
-
-:::success
 **<font style="color:rgb(35, 39, 47);">使用场景：</font>**
 
 1. <font style="color:rgb(35, 39, 47);">跳过组件渲染，例如：父组件重新渲染子组件，可以将子组件缓存，则可以跳过组件渲染</font>
@@ -886,7 +1250,35 @@ function App(){
 3. <font style="color:rgb(35, 39, 47);">记忆另一个Hook的依赖，</font>
 4. <font style="color:rgb(35, 39, 47);">记忆一个函数</font>
 
-:::
+### useCallback
+作用：在组件多次重新渲染时缓存函数
+
+```jsx
+const memo = useCallback(()=>{},[])
+```
+### <font style="color:rgb(35, 39, 47);">useReducer</font>
+作用：和useState的作用类似，用来管理**<font style="color:#ED740C;">相对复杂的状态数据</font>**
+
+#### 基础用法
+```javascript
+1.定义一个reducer函数(根据不同的action返回不同的新状态)
+function reducer(state,action){
+  switch(action.type){
+    case 'INC': return state+1
+    case 'DEC': return state-1
+    case 'SET': return action.payload
+    default: return state
+    }
+}
+2.在组件中调用useReducer,并传入reducer函数和状态的初始值
+const [state,dispatch] = useReducer(reducer,0)
+
+3.调用dispatch=>更改状态 使用这个状态更新UI 传递的是对象
+dispatch({type:'INC',payload:100})
+```
+
+![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736846877935-9255de1e-1898-4924-8861-87ffc1807cb9.png) 
+
 
 ## React.memo
 作用：允许组件**<font style="color:#ECAA04;">在Props没有改变的情况下跳过渲染，只有Props发生变化时才会重新渲染。</font>**
@@ -906,13 +1298,6 @@ const MemoComponent = memo(function Son(){
 
 1. prop是简单类型，直接比较
 2. prop是引用类型，React**<font style="color:#ECAA04;">只关心引用是否变化</font>**
-
-## useCallback
-作用：在组件多次重新渲染时缓存函数
-
-```jsx
-const memo = useCallback(()=>{},[])
-```
 
 ## React.forwardRef
 作用：使用Ref绑定父组件中的子组件的DOM元素
@@ -940,30 +1325,6 @@ const Son = forwardRef((props,ref)=>{
   return (<div ref = {ref}> </div>)
 })
 ```
-
-## <font style="color:rgb(35, 39, 47);">useReducer</font>
-作用：和useState的作用类似，用来管理**<font style="color:#ED740C;">相对复杂的状态数据</font>**
-
-### 基础用法
-```javascript
-1.定义一个reducer函数(根据不同的action返回不同的新状态)
-function reducer(state,action){
-  switch(action.type){
-    case 'INC': return state+1
-    case 'DEC': return state-1
-    case 'SET': return action.payload
-    default: return state
-    }
-}
-2.在组件中调用useReducer,并传入reducer函数和状态的初始值
-const [state,dispatch] = useReducer(reducer,0)
-
-3.调用dispatch=>更改状态 使用这个状态更新UI 传递的是对象
-dispatch({type:'INC',payload:100})
-```
-
-![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736846877935-9255de1e-1898-4924-8861-87ffc1807cb9.png) 
-
 ## 自定义Hook(重要)
 概念：自定义Hook是以**use打头的函数**，通过自定义Hook函数可以实现逻辑的封装和复用。**<font style="color:rgb(35, 39, 47);">Hook的名称必须以 </font>**`**use**`**<font style="color:rgb(35, 39, 47);">开头，然后紧跟一个大写字母</font>**<font style="color:rgb(35, 39, 47);">。</font>
 
