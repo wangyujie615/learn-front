@@ -17,9 +17,7 @@ React由Meta公司研发，是一个用于构建web和原生交互界面的库�
 + 相较于其他前端框架：丰富的生态、跨平台支持
 
 ### 单向数据绑定
-
 单向数据流：数据只能从父组件传向子组件
-
 具体来说，`React`数据分为两类：
 
 - `Props`：由父组件传递给子组件的**只读**属性，不能在子组件中修改；
@@ -29,11 +27,11 @@ React由Meta公司研发，是一个用于构建web和原生交互界面的库�
 
 1. 易于理解和调试，双向数据绑定会导致数据流不稳定
 2. 更好的性能表现，双向数据绑定中，数据发生变化时，系统需要同时更新视图和数据模型。单向数据流中，**数据的更新只会从父组件到子组件，避免不必要的视图更新**。
-3. 更好的逻辑控制，数据的更改只能由父组件或本身进行。双向的数据绑定，数据的更新可能来自多个组件，数据不可预测。
+3. 更好的逻辑控制，数据的更改只能由父组件或本身进行。**双向的数据绑定，数据的更新可能来自多个组件，数据不可预测**。
 4. 跟容易实现服务端渲染。
 
 ## 开发环境的搭建
-create-react-app：是一个快速创建React开发环境的工具，底层由Webpac构建，封装了配置细节，开箱即用。
+create-react-app：是一个快速创建React开发环境的工具，底层由Webpack构建，封装了配置细节，开箱即用。
 
 ```html
 npx create-react-app react-basic
@@ -129,13 +127,13 @@ or
 
 ##### 标签必须闭合
 
-<font style="color:rgb(255, 100,50);">**JSX 要求标签必须正确闭合(自闭和或对标签闭合)**。</font>
+<font style="color:rgb(255, 100,50);">**JSX要求标签必须正确闭合(自闭和或对标签闭合)**。</font>
 
 ```jsx
 <>
   <img 
     src="https://i.imgur.com/yXOvdOSs.jpg" 
-    alt="Hedy Lamarr" 
+    alt="Hedy Lamarr"  
     class="photo"
    />
   <ul>
@@ -1279,8 +1277,10 @@ dispatch({type:'INC',payload:100})
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736846877935-9255de1e-1898-4924-8861-87ffc1807cb9.png) 
 
+## HOC
 
-## React.memo
+###  React.memo
+
 作用：允许组件**<font style="color:#ECAA04;">在Props没有改变的情况下跳过渲染，只有Props发生变化时才会重新渲染。</font>**
 
 React组件默认的渲染机制：只要<font style="color:#ECAA04;background-color:#FFFFFF;">父组件重新渲染子组件就会重新渲染</font>。
@@ -1291,7 +1291,7 @@ const MemoComponent = memo(function Son(){
 })
 ```
 
-### Props的比较机制
+#### Props的比较机制
 机制：在使用memo缓存组件之后，React会对每一个prop使用Object.is比较新值和老值，返回True，表示没有变化。
 
 区别：
@@ -1299,7 +1299,7 @@ const MemoComponent = memo(function Son(){
 1. prop是简单类型，直接比较
 2. prop是引用类型，React**<font style="color:#ECAA04;">只关心引用是否变化</font>**
 
-## React.forwardRef
+### React.forwardRef
 作用：使用Ref绑定父组件中的子组件的DOM元素
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736855533119-87f06c44-a64c-4d48-8cd7-b3bc1b407fcd.png)
@@ -1337,8 +1337,6 @@ const Son = forwardRef((props,ref)=>{
 
 ## <font style="color:rgb(35, 39, 47);">Redux</font>
 Redux是React最常用的集中状态管理工具，可以独立于框架运行。**<font style="color:rgb(28, 30, 33);">使用叫做 “action” 的事件来管理和更新应用状态的模式和工具库</font>**<font style="color:rgb(28, 30, 33);"> 。</font>
-
-:::success
 <font style="color:rgb(28, 30, 33);">为什么使用Redux?</font>
 
 <font style="color:rgb(28, 30, 33);">Redux 帮你管理“全局”状态 - 应用程序中的很多组件都需要的状态。</font>
@@ -1617,7 +1615,7 @@ ReactDOM.render(
 
 
 
-## ReactRouter
+## React.Router
 前端路由：一个路径path对应一个组件component，当我们在浏览器中访问一个path的时候，path对应的组件会在页面中进行渲染。
 
 ### 开发中的路由配置
@@ -1706,18 +1704,18 @@ let id = params.id
 ![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736172282839-3a1a4791-8d31-4d2c-8547-90336f29b35b.png)
 
 ### 两种路由模式![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736172422231-fb1d1025-e90e-4c6f-9c99-53b02c66e793.png)
-# 配置别名路径
+## 配置别名路径
 1. 路径解析配置(webpack)，把@/ 解析为src/.
 2. 路径联想配置(VSCode)，VSCode在输入@/时，自动联想出来对应的src/下的子级目录。
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736257352086-a386d187-5ea2-42fc-ac2b-8233606b7d16.png)
 
-# 数据Mock
+## 数据Mock
 在前后端分类的开发模式下，前端可以在没有实际后端接口的支持下先进行接口数据的模拟，进行正常的业务功能开发
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736258120220-74f9da70-0ebd-4241-9afb-7ca695bab7bb.png)
 
-# antD-mobile主题定制
+## antD-mobile主题定制
 全局定制：整个应用返回内的组件都生效
 
 局部定制：只在某些元素内部组件生效
