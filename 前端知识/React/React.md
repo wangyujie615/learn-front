@@ -1336,7 +1336,9 @@ const Son = forwardRef((props,ref)=>{
 
 <font style="color:rgb(35, 39, 47);"></font>
 
-## <font style="color:rgb(35, 39, 47);">Redux</font>
+## 集中状态管理工具
+
+### <font style="color:rgb(35, 39, 47);">Redux</font>
 Redux是React最常用的集中状态管理工具，可以独立于框架运行。**<font style="color:rgb(28, 30, 33);">使用叫做 “action” 的事件来管理和更新应用状态的模式和工具库</font>**<font style="color:rgb(28, 30, 33);"> 。</font>
 <font style="color:rgb(28, 30, 33);">为什么使用Redux?</font>
 
@@ -1357,7 +1359,7 @@ Redux是React最常用的集中状态管理工具，可以独立于框架运行�
 
 作用：通过集中管理的方式管理应用的状态。
 
-### 状态管理
+#### 状态管理
 Redux定义了三个内容：
 
 + **<font style="color:rgb(28, 30, 33);">state</font>**<font style="color:rgb(28, 30, 33);">：驱动应用的真实数据源头</font>
@@ -1373,8 +1375,8 @@ Redux定义了三个内容：
 + <font style="color:rgb(28, 30, 33);">当发生某些事情时（例如用户单击按钮），state 会根据发生的事情进行更新，生成新的 state</font>
 + <font style="color:rgb(28, 30, 33);">基于新的 state 重新渲染 View</font>
 
-### 术语
-#### Action
+#### 术语
+##### Action
 **<font style="color:rgb(28, 30, 33);">action</font>**<font style="color:rgb(28, 30, 33);"> 是一个具有 </font>`<font style="color:rgb(28, 30, 33);">type</font>`<font style="color:rgb(28, 30, 33);"> 字段的普通 JavaScript 对象。</font>**<font style="color:rgb(28, 30, 33);">你可以将 action 视为描述应用程序中发生了什么的事件</font>**<font style="color:rgb(28, 30, 33);">.</font>`<font style="color:rgb(28, 30, 33);">type</font>`<font style="color:rgb(28, 30, 33);"> 字段是一个字符串，给这个 action 一个描述性的名字，比如</font>`<font style="color:rgb(28, 30, 33);">"todos/todoAdded"</font>`<font style="color:rgb(28, 30, 33);">。action 对象可以有其他字段，其中包含有关发生的事情的附加信息。按照惯例，我们将该信息放在名为 </font>`<font style="color:rgb(28, 30, 33);">payload</font>`<font style="color:rgb(28, 30, 33);"> 的字段中。</font>
 
 ```javascript
@@ -1384,7 +1386,7 @@ const addTodoAction = {
 }
 ```
 
-#### Action Creator
+##### Action Creator
 **<font style="color:rgb(28, 30, 33);">action creator</font>**<font style="color:rgb(28, 30, 33);"> 是一个创建并返回一个 action 对象的函数。它的作用是让你不必每次都手动编写 action 对象：</font>
 
 ```javascript
@@ -1396,7 +1398,7 @@ const addTodo = text=>{
 }
 ```
 
-#### Reducer
+##### Reducer
 **<font style="color:rgb(28, 30, 33);">reducer</font>**<font style="color:rgb(28, 30, 33);"> 是一个函数，接收当前的 </font>`<font style="color:rgb(28, 30, 33);">state</font>`<font style="color:rgb(28, 30, 33);"> 和一个 </font>`<font style="color:rgb(28, 30, 33);">action</font>`<font style="color:rgb(28, 30, 33);"> 对象，必要时决定如何更新状态，并返回新状态。函数签名是：</font>`<font style="color:rgb(28, 30, 33);">(state, action) => newState</font>`<font style="color:rgb(28, 30, 33);">。 </font>**<font style="color:rgb(28, 30, 33);">你可以将 reducer </font>****<font style="color:#ECAA04;">视为一个事件监听器</font>****<font style="color:rgb(28, 30, 33);">，它根据接收到的 action（事件）类型处理事件。</font>**
 
 :::success
@@ -1423,7 +1425,7 @@ function counterReducer(state=inintialState,action){
 }
 ```
 
-#### Store(存储State)
+##### Store(存储State)
 <font style="color:#ECAA04;">当前 Redux 应用的 state 存在于一个名为</font>**<font style="color:#ECAA04;">store</font>**<font style="color:#ECAA04;">的对象中</font><font style="color:rgb(28, 30, 33);">。store是通过传入一个reducer来创建的，并且有一个名为</font>`<font style="color:rgb(28, 30, 33);">getState</font>`<font style="color:rgb(28, 30, 33);">的方法，它返回当前状态值：</font>
 
 ```javascript
@@ -1431,7 +1433,7 @@ import {configureStore} from '@reduxjs/toolkit'
 const store = configureStore({reducer:counterReducer})
 ```
 
-#### Dispatch(更新State)
+##### Dispatch(更新State)
 <font style="color:rgb(28, 30, 33);">Redux store有一个方法叫</font>`<font style="color:rgb(28, 30, 33);">dispatch</font>`<font style="color:rgb(28, 30, 33);">。</font>**<font style="color:rgb(28, 30, 33);">更新state的唯一方法是调用</font>**`**<font style="color:rgb(28, 30, 33);">store.dispatch()</font>**`**<font style="color:rgb(28, 30, 33);">并传入一个 </font>****<font style="color:#ECAA04;">action对象</font>**<font style="color:rgb(28, 30, 33);">。store将执行所有reducer函数并计算出更新后的state，调用</font>`<font style="color:rgb(28, 30, 33);">getState()</font>`<font style="color:rgb(28, 30, 33);"> 可以获取新 state。</font>**<font style="color:#ECAA04;">dispatch 一个action可以形象的理解为 "触发一个事件"</font>**<font style="color:#ECAA04;">。</font>
 
 ```javascript
@@ -1447,7 +1449,7 @@ console.log(store.getState())
 // {value: 2}
 ```
 
-#### Selector
+##### Selector
 **<font style="color:rgb(28, 30, 33);">Selector</font>**<font style="color:rgb(28, 30, 33);">函数可以从 store 状态树中提取指定的片段。随着应用变得越来越大，会遇到应用程序的不同部分需要读取相同的数据，selector可以避免重复这样的读取逻辑：</font>
 
 ```javascript
@@ -1457,7 +1459,7 @@ const currentValue = selectCounterValue(store.getState())
 console.log(currentValue)
 ```
 
-### 应用结构
+#### 应用结构
 <font style="color:rgb(28, 30, 33);">以下是构成此应用程序的关键文件：</font>
 
 + `<font style="color:rgb(28, 30, 33);">/src</font>`
@@ -1470,7 +1472,7 @@ console.log(currentValue)
             + `<font style="color:rgb(28, 30, 33);">Counter.js</font>`<font style="color:rgb(28, 30, 33);">: 展示 counter 特性的</font>**<font style="color:rgb(28, 30, 33);">React组件</font>**
             + `<font style="color:rgb(28, 30, 33);">counterSlice.js</font>`<font style="color:rgb(28, 30, 33);">: counter特性相关的</font>**<font style="color:rgb(28, 30, 33);">redux逻辑</font>**
 
-#### 创建Redux Store
+##### 创建Redux Store
 <font style="color:rgb(28, 30, 33);">Redux store是使用Redux Toolkit中的</font>`<font style="color:rgb(28, 30, 33);">configureStore</font>`<font style="color:rgb(28, 30, 33);">函数创建的。</font>`<font style="color:rgb(28, 30, 33);">configureStore</font>`<font style="color:rgb(28, 30, 33);">要求我们传入一个</font>`<font style="color:rgb(28, 30, 33);">reducer</font>`<font style="color:rgb(28, 30, 33);">参数。</font>
 
 ```javascript
@@ -1485,8 +1487,6 @@ export default configureStore({
 ```
 
 <font style="color:rgb(28, 30, 33);">应用程序可能由许多不同的特性组成，每个特性都可能有自己的reducer函数。当我们调用</font>`<font style="color:rgb(28, 30, 33);">configureStore</font>`<font style="color:rgb(28, 30, 33);"> 时，可以传入一个对象中的所有不同的reducer。 对象中的键名key将定义最终状态树中的键名key。</font>
-
-:::success
 <font style="color:rgb(28, 30, 33);">store有以下几个职责:</font>
 
 + <font style="color:rgb(28, 30, 33);">在内部保存当前应用程序 state</font>
@@ -1515,7 +1515,7 @@ export default configureStore({
 })
 ```
 
-#### 创建Slice Reducer和Action
+##### 创建Slice Reducer和Action
 ```javascript
 import { createSlice } from '@reduxjs/toolkit'
 
@@ -1549,7 +1549,7 @@ export default counterSlice.reducer
 
 <font style="color:rgb(28, 30, 33);">Redux Toolkit有一个名为</font>`<font style="color:rgb(28, 30, 33);">createSlice</font>`<font style="color:rgb(28, 30, 33);">的函数，它负责生成action类型字符串、action creator函数和 action对象的工作。你所要做的就是为这个slice定义一个名称，编写一个包含reducer函数的对象，它会自动生成相应的action代码。</font>
 
-#### <font style="color:rgb(28, 30, 33);">用Thunk编写异步逻辑</font>
+##### <font style="color:rgb(28, 30, 33);">用Thunk编写异步逻辑</font>
 **<font style="color:rgb(28, 30, 33);">thunk</font>**<font style="color:rgb(28, 30, 33);">是一种特定类型的Redux函数，可以包含异步逻辑。Thunk是使用两个函数编写的：</font>
 
 + <font style="color:rgb(28, 30, 33);">一个</font>**<font style="color:rgb(28, 30, 33);">内部thunk函数</font>**<font style="color:rgb(28, 30, 33);">，它以</font>`<font style="color:rgb(28, 30, 33);">dispatch</font>`<font style="color:rgb(28, 30, 33);">和</font>`<font style="color:rgb(28, 30, 33);">getState</font>`<font style="color:rgb(28, 30, 33);">作为参数</font>
@@ -1586,7 +1586,7 @@ const fetchUserById = userId => {
 }
 ```
 
-### Providing the Store
+#### Providing the Store
 <font style="color:rgb(28, 30, 33);">需要使用一个名为 </font>`<font style="color:rgb(28, 30, 33);"><Provider></font>`<font style="color:rgb(28, 30, 33);"> 的组件在幕后传递 Redux store，以便他们可以访问它。</font>
 
 ```javascript
@@ -1606,11 +1606,11 @@ ReactDOM.render(
 )
 ```
 
-## Zustand
+### Zustand
 
 官网：[https://awesomedevin.github.io/zustand-vue/](https://awesomedevin.github.io/zustand-vue/)
 
-### 切片模式
+#### 切片模式
 场景：当单个store比较大的时候，可以采用 切片模式 进行模块拆分组合，类似于模块化
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736857663431-9caff5a2-3c9b-42f6-969d-cb3c041fa8c0.png)
