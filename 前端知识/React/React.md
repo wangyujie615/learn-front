@@ -1277,6 +1277,22 @@ dispatch({type:'INC',payload:100})
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736846877935-9255de1e-1898-4924-8861-87ffc1807cb9.png) 
 
+### useInperativeHandle
+作用：通过ref暴露子组件的方法
+
+![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736855873740-fb84205a-d997-4557-a956-e8cd76c89f86.png)
+
+```jsx
+const Son = forwardRef((props,ref)=>{
+  const handle = ()=>{console.log("哈哈哈")}
+  useInperativeHandle(ref,()=>{
+    //暴露的子组件的方法 
+    handle
+  })
+  return (<div ref = {ref}> </div>)
+})
+```
+
 ## HOC
 
 ###  React.memo
@@ -1309,23 +1325,8 @@ const Son = forwardRef((props,ref)=>{
   return (<div ref = {ref}> </div>)
 })
 ```
+### 自定义Hook(重要)
 
-## useInperativeHandle
-作用：通过ref暴露子组件的方法
-
-![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736855873740-fb84205a-d997-4557-a956-e8cd76c89f86.png)
-
-```jsx
-const Son = forwardRef((props,ref)=>{
-  const handle = ()=>{console.log("哈哈哈")}
-  useInperativeHandle(ref,()=>{
-    //暴露的子组件的方法 
-    handle
-  })
-  return (<div ref = {ref}> </div>)
-})
-```
-## 自定义Hook(重要)
 概念：自定义Hook是以**use打头的函数**，通过自定义Hook函数可以实现逻辑的封装和复用。**<font style="color:rgb(35, 39, 47);">Hook的名称必须以 </font>**`**use**`**<font style="color:rgb(35, 39, 47);">开头，然后紧跟一个大写字母</font>**<font style="color:rgb(35, 39, 47);">。</font>
 
 <font style="color:rgb(35, 39, 47);">使用规则：</font>
@@ -1606,6 +1607,7 @@ ReactDOM.render(
 ```
 
 ## Zustand
+
 官网：[https://awesomedevin.github.io/zustand-vue/](https://awesomedevin.github.io/zustand-vue/)
 
 ### 切片模式
