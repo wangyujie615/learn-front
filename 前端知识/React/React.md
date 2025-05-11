@@ -1002,7 +1002,19 @@ React.createElemrnt('div',{onClick:this.handle()})
 
 ![image-20250511221817219](D:\面试\面试\前端知识\img\image-20250511221817219.png)
 
-## Hook
+## Hooks
+
+### Hooks出现的原因
+
+1. 简化状态管理和副作用处理。之前都是类组件通过生命周期方法进行管理，十分复杂。
+2. 拆分复杂逻辑，提升代码可读性
+3. 避免类组件的复杂性，同时可以使得函数组件变成有状态组件或者实现生命周期函数
+
+#### Hook的结构
+
+Hooks是挂载在组件Fiber节点上memorizedState上的。
+
+todo
 
 ### <font style="color:rgb(35, 39, 47);">useState</font>
 
@@ -1134,6 +1146,10 @@ root.render(<Image />);
 
 #### <font style="color:rgb(35, 39, 47);">游览器绘制</font>
 <font style="color:rgb(35, 39, 47);">在渲染完成并且React更新DOM之后，浏览器就会重新绘制屏幕。</font>
+
+#### useState的底层原理(重点)
+
+todo
 
 ### useRef
 #### 使用ref引用值
