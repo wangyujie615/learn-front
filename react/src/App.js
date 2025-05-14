@@ -11,6 +11,7 @@ function App() {
     }, [first, m])
     return (
         <div>
+            <span>2</span>
             <span>{first}</span>
             <button onClick={() => setFirst(first + 1)}>btn_first</button>
             <span>{second}</span>
