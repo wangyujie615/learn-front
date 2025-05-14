@@ -212,3 +212,9 @@ Next.js 可以在顶级文件夹下提供**静态资源**[`/public`](https://nex
 - 提供现代格式的图像，例如[WebP](https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types#webp)和[AVIF](https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types#avif_image)，当浏览器支持时。
 
 ### 创建布局和页面
+
+#### 嵌套路由
+
+Next.js 使用文件系统路由，其中**文件夹**用于创建嵌套路由。每个文件夹代表一个映射到**URL 段的**路由段。
+
+![image-20250512230244329](D:\面试\learn-front\前端知识\img\image-20250512230244329.png)
