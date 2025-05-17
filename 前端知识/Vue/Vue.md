@@ -146,7 +146,7 @@ const objectOfAttrs = {
 ```
 
 #### 参数Arguments
-<font style="color:#000000;">某些指令会需要一个“参数”，在指令名后通过一个冒号隔开做标识。例如用 </font>`<font style="color:#000000;">v-bind</font>`<font style="color:#000000;"> 指令来响应式地更新一个 HTML attribute：</font>
+<font style="color:#000000;">某些指令会需要一个“参数”，在指令名后通过一个冒号隔开做标识。例如用 </font>`v-bind`<font style="color:#000000;"> 指令来响应式地更新一个 HTML attribute：</font>
 
 ```plain
 <a v-bind:href="url"> ... </a>
@@ -155,16 +155,16 @@ const objectOfAttrs = {
 <a :href="url"> ... </a>
 ```
 
-<font style="color:#000000;">这里 </font>`href`<font style="color:#000000;"> 就是一个参数，它告诉 </font>`v-bind`<font style="color:#000000;"> 指令将表达式 </font>`<font style="color:#000000;">url</font>`<font style="color:#000000;"> 的值绑定到元素的 </font>`<font style="color:#000000;">href</font>`<font style="color:#000000;"> attribute 上。在简写中，</font>**<font style="color:#000000;">参数前的一切 (例如 </font>**`**<font style="color:#000000;">v-bind:</font>**`**<font style="color:#000000;">) 都会被缩略为一个 </font>**`**<font style="color:#000000;">:</font>**`**<font style="color:#000000;"> 字符</font>**<font style="color:#000000;">。另一个例子是 </font>`<font style="color:#000000;">v-on</font>`<font style="color:#000000;"> 指令，它将监听 DOM 事件：</font>
+<font style="color:#000000;">这里 </font>`href`<font style="color:#000000;"> 就是一个参数，它告诉 </font>`v-bind`<font style="color:#000000;"> 指令将表达式 </font>`url`<font style="color:#000000;"> 的值绑定到元素的 </font>`href`<font style="color:#000000;"> attribute 上。在简写中，</font>**<font style="color:#000000;">参数前的一切 (例如 </font>**`v-bind:`**<font style="color:#000000;">) 都会被缩略为一个 </font>**`:`**<font style="color:#000000;"> 字符</font>**<font style="color:#000000;">。另一个例子是 </font>`v-on<`<font style="color:#000000;"> 指令，它将监听 DOM 事件：</font>
 
-```plain
+```vue
 <a v-on:click="doSomething"> ... </a>
 
 <!-- 简写 -->
 <a @click="doSomething"> ... </a>
 ```
 
-<font style="color:#000000;">这里的参数是要监听的事件名称：</font>`<font style="color:#000000;">click</font>`<font style="color:#000000;">。</font>`**<font style="color:#000000;">v-on</font>**`**<font style="color:#000000;"> 有一个相应的缩写，即 </font>**`**<font style="color:#000000;">@</font>**`**<font style="color:#000000;"> 字符</font>**<font style="color:#000000;">。我们之后也会讨论关于事件处理的更多细节。</font>
+<font style="color:#000000;">这里的参数是要监听的事件名称：</font>`click`<font style="color:#000000;">。</font>`v-on`**<font style="color:#000000;"> 有一个相应的缩写，即 </font>**`@`**<font style="color:#000000;"> 字符</font>**<font style="color:#000000;">。我们之后也会讨论关于事件处理的更多细节。</font>
 
 #### <font style="color:#000000;">动态参数</font>
 <font style="color:#000000;">同样在指令参数上也可以使用一个 JavaScript 表达式，需要包含在一对方括号内：</font>
@@ -180,7 +180,7 @@ const objectOfAttrs = {
 <a :[attributeName]="url"> ... </a>
 ```
 
-**<font style="color:#000000;">这里的 </font>**`**<font style="color:#000000;">attributeName</font>**`**<font style="color:#000000;"> 会作为一个 JavaScript 表达式被动态执行，计算得到的值会被用作最终的参数。</font>**<font style="color:#000000;">举例来说，如果你的组件实例有一个数据属性 </font>`<font style="color:#000000;">attributeName</font>`<font style="color:#000000;">，其值为 </font>`<font style="color:#000000;">"href"</font>`<font style="color:#000000;">，那么这个绑定就等价于 </font>`<font style="color:#000000;">v-bind:href</font>`<font style="color:#000000;">。</font>
+**<font style="color:#000000;">这里的 </font>**`attributeName`**<font style="color:#000000;"> 会作为一个 JavaScript 表达式被动态执行，计算得到的值会被用作最终的参数。</font>**<font style="color:#000000;">举例来说，如果你的组件实例有一个数据属性 </font>`attributeName`<font style="color:#000000;">，其值为 </font>`"href"`<font style="color:#000000;">，那么这个绑定就等价于 </font>`v-bind:href`<font style="color:#000000;">。</font>
 
 <font style="color:#000000;">相似地，你还可以将一个函数绑定到动态的事件名称上：</font>
 
@@ -191,10 +191,10 @@ const objectOfAttrs = {
 <a @[eventName]="doSomething"> ... </a>
 ```
 
-<font style="color:#000000;">在此示例中，当 </font>`<font style="color:#000000;">eventName</font>`<font style="color:#000000;"> 的值是 </font>`<font style="color:#000000;">"focus"</font>`<font style="color:#000000;"> 时，</font>`<font style="color:#000000;">v-on:[eventName]</font>`<font style="color:#000000;"> 就等价于 </font>`<font style="color:#000000;">v-on:focus</font>`<font style="color:#000000;">。</font>
+<font style="color:#000000;">在此示例中，当 </font>`eventName`<font style="color:#000000;"> 的值是 </font>`"focus"`<font style="color:#000000;"> 时，</font>`v-on:[eventName]`<font style="color:#000000;"> 就等价于 </font>`v-on:focus`<font style="color:#000000;">。</font>
 
 ##### 动态参数值的限制
-**<font style="color:#000000;">动态参数中表达式的值应当是一个字符串，或者是 </font>**`**<font style="color:#000000;">null</font>**`<font style="color:#000000;">。特殊值 </font>`<font style="color:#000000;">null</font>`<font style="color:#000000;"> 意为显式移除该绑定。其他非字符串的值会触发警告。</font>
+**<font style="color:#000000;">动态参数中表达式的值应当是一个字符串，或者是 </font>**`null`<font style="color:#000000;">。特殊值 </font>`null`<font style="color:#000000;"> 意为显式移除该绑定。其他非字符串的值会触发警告。</font>
 
 ##### <font style="color:#000000;">动态参数语法的限制</font>
 <font style="color:#000000;">动态参数表达式因为某些字符的缘故有一些语法限制，比如空格和引号，在 HTML attribute 名称中都是不合法的。例如下面的示例：</font>
@@ -215,7 +215,7 @@ const objectOfAttrs = {
 <font style="color:#000000;">上面的例子将会在 DOM 内嵌模板中被转换为 </font>`:[someattr]`<font style="color:#000000;">。如果你的组件拥有 “someAttr” 属性而非 “someattr”，这段代码将不会工作。单文件组件内的模板</font>**<font style="color:#000000;">不</font>**<font style="color:#000000;">受此限制。</font>
 
 ### <font style="color:#000000;">修饰符 Modifiers</font>
-**<font style="color:#000000;">修饰符是以点开头的特殊后缀，表明指令需要以一些特殊的方式被绑定</font>**<font style="color:#000000;">。例如 </font>`<font style="color:#000000;">.prevent</font>`<font style="color:#000000;"> 修饰符会告知 </font>`<font style="color:#000000;">v-on</font>`<font style="color:#000000;"> 指令对触发的事件调用 </font>`<font style="color:#000000;">event.preventDefault()</font>`<font style="color:#000000;">：</font>
+**<font style="color:#000000;">修饰符是以点开头的特殊后缀，表明指令需要以一些特殊的方式被绑定</font>**<font style="color:#000000;">。例如 </font>`.prevent`<font style="color:#000000;"> 修饰符会告知 </font>`v-on`<font style="color:#000000;"> 指令对触发的事件调用 </font>`event.preventDefault()`<font style="color:#000000;">：</font>
 
 ```plain
 <form @submit.prevent="onSubmit">...</form>
@@ -328,7 +328,7 @@ async function increment() {
 ```
 
 ### reactive()
-<font style="color:rgb(33, 53, 71);">还有另一种声明响应式状态的方式，即使用 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">reactive()</font>`<font style="color:rgb(33, 53, 71);"> API。与将内部值包装在特殊对象中的 ref 不同，</font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">reactive()</font>`<font style="color:rgb(33, 53, 71);"> 将</font>**<font style="color:rgb(33, 53, 71);">使对象本身具有响应性</font>**<font style="color:rgb(33, 53, 71);">：</font>
+<font style="color:rgb(33, 53, 71);">还有另一种声明响应式状态的方式，即使用 </font>`reactive()`<font style="color:rgb(33, 53, 71);"> API。与将内部值包装在特殊对象中的 ref 不同，</font>`reactive()`<font style="color:rgb(33, 53, 71);"> 将</font>**<font style="color:rgb(33, 53, 71);">使对象本身具有响应性</font>**<font style="color:rgb(33, 53, 71);">：</font>
 
 ```javascript
 import { reactive } from 'vue'
@@ -338,7 +338,7 @@ const state = reactive({ count: 0 })
 
 <font style="color:rgb(33, 53, 71);">响应式对象是 </font>[<font style="color:rgb(66, 184, 131);">JavaScript 代理</font>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)<font style="color:rgb(33, 53, 71);">，其行为就和普通对象一样。不同的是，Vue 能够拦截对响应式对象所有属性的访问和修改，以便进行依赖追踪和触发更新。</font>
 
-`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">reactive()</font>`<font style="color:rgb(33, 53, 71);"> 将深层地转换对象：当访问嵌套对象时，它们也会被 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">reactive()</font>`<font style="color:rgb(33, 53, 71);"> 包装。当 ref 的值是一个对象时，</font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">ref()</font>`<font style="color:rgb(33, 53, 71);"> 也会在内部调用它。与浅层 ref 类似，这里也有一个 </font>[<font style="color:rgb(66, 184, 131);">shallowReactive()</font>](https://cn.vuejs.org/api/reactivity-advanced.html#shallowreactive)<font style="color:rgb(33, 53, 71);"> API 可以选择退出深层响应性。</font>
+`reactive()`<font style="color:rgb(33, 53, 71);"> 将深层地转换对象：当访问嵌套对象时，它们也会被 </font>`reactive()`<font style="color:rgb(33, 53, 71);"> 包装。当 ref 的值是一个对象时，</font>`ref()`<font style="color:rgb(33, 53, 71);"> 也会在内部调用它。与浅层 ref 类似，这里也有一个 </font>[<font style="color:rgb(66, 184, 131);">shallowReactive()</font>](https://cn.vuejs.org/api/reactivity-advanced.html#shallowreactive)<font style="color:rgb(33, 53, 71);"> API 可以选择退出深层响应性。</font>
 
 #### <font style="color:rgb(33, 53, 71);">Proxy vs Original</font>
 ```javascript
@@ -455,7 +455,7 @@ const fullName = computed({
 #### <font style="color:rgb(33, 53, 71);">获取上一个值</font>
 <font style="color:rgb(33, 53, 71);">如果需要，可以</font>**<font style="color:rgb(33, 53, 71);">通过访问计算属性的 getter 的第一个参数来获取计算属性返回的上一个值</font>**<font style="color:rgb(33, 53, 71);">：</font>
 
-```plain
+```vue
 <script setup>
 import { ref, computed } from 'vue'
 
@@ -476,7 +476,7 @@ const alwaysSmall = computed((previous) => {
 
 <font style="color:rgb(33, 53, 71);">如果你正在使用可写的计算属性的话：</font>
 
-```plain
+```vue
 <script setup>
 import { ref, computed } from 'vue'
 
@@ -652,7 +652,7 @@ const styleObject = reactive({
 
 ## <font style="color:rgb(33, 53, 71);">列表渲染</font>
 ### `v-for`
-<font style="color:rgb(33, 53, 71);">可以使用 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-for</font>`<font style="color:rgb(33, 53, 71);"> 指令基于一个数组来渲染一个列表。</font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-for</font>`<font style="color:rgb(33, 53, 71);"> 指令的值需要使用 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">item in items</font>`<font style="color:rgb(33, 53, 71);"> 形式的特殊语法，其中 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">items</font>`<font style="color:rgb(33, 53, 71);"> 是源数据的数组，而 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">item</font>`<font style="color:rgb(33, 53, 71);"> 是迭代项的</font>**<font style="color:rgb(33, 53, 71);">别名</font>**<font style="color:rgb(33, 53, 71);">：</font>
+<font style="color:rgb(33, 53, 71);">可以使用 </font>`v-for`<font style="color:rgb(33, 53, 71);"> 指令基于一个数组来渲染一个列表。</font>`v-for`<font style="color:rgb(33, 53, 71);"> 指令的值需要使用 </font>`item in items`<font style="color:rgb(33, 53, 71);"> 形式的特殊语法，其中 </font>`items`<font style="color:rgb(33, 53, 71);"> 是源数据的数组，而 </font>`item`<font style="color:rgb(33, 53, 71);"> 是迭代项的</font>**<font style="color:rgb(33, 53, 71);">别名</font>**<font style="color:rgb(33, 53, 71);">：</font>
 
 ```plain
 const items = ref([{ message: 'Foo' }, { message: 'Bar' }])
@@ -664,7 +664,7 @@ const items = ref([{ message: 'Foo' }, { message: 'Bar' }])
 </li>
 ```
 
-<font style="color:rgb(33, 53, 71);">在 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-for</font>`<font style="color:rgb(33, 53, 71);"> 块中可以完整地访问父作用域内的属性和变量。</font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-for</font>`<font style="color:rgb(33, 53, 71);"> 也支持使用可选的第二个参数表示当前项的位置索引。</font>
+<font style="color:rgb(33, 53, 71);">在 </font>`v-for`<font style="color:rgb(33, 53, 71);"> 块中可以完整地访问父作用域内的属性和变量。</font>`v-for`<font style="color:rgb(33, 53, 71);"> 也支持使用可选的第二个参数表示当前项的位置索引。</font>
 
 ```plain
 const parentMessage = ref('Parent')
@@ -677,7 +677,7 @@ const items = ref([{ message: 'Foo' }, { message: 'Bar' }])
 </li>
 ```
 
-<font style="color:rgb(33, 53, 71);">对于多层嵌套的 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-for</font>`<font style="color:rgb(33, 53, 71);">，作用域的工作方式和函数的作用域很类似。每个 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-for</font>`<font style="color:rgb(33, 53, 71);"> 作用域都可以访问到父级作用域：</font>
+<font style="color:rgb(33, 53, 71);">对于多层嵌套的 </font>`v-for`<font style="color:rgb(33, 53, 71);">，作用域的工作方式和函数的作用域很类似。每个 </font>`v-for`<font style="color:rgb(33, 53, 71);"> 作用域都可以访问到父级作用域：</font>
 
 ```plain
 <li v-for="item in items">
@@ -687,16 +687,16 @@ const items = ref([{ message: 'Foo' }, { message: 'Bar' }])
 </li>
 ```
 
-<font style="color:rgb(33, 53, 71);">你也可以使用 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">of</font>`<font style="color:rgb(33, 53, 71);"> 作为分隔符来替代 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">in</font>`<font style="color:rgb(33, 53, 71);">，这更接近 JavaScript 的迭代器语法：</font>
+<font style="color:rgb(33, 53, 71);">你也可以使用 </font>`of`<font style="color:rgb(33, 53, 71);"> 作为分隔符来替代 </font>`in`<font style="color:rgb(33, 53, 71);">，这更接近 JavaScript 的迭代器语法：</font>
 
 ```plain
 <div v-for="item of items"></div>
 ```
 
 ### `v-for`与对象
-<font style="color:rgb(33, 53, 71);">可以使用 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-for</font>`<font style="color:rgb(33, 53, 71);"> 来遍历一个对象的所有属性。遍历的顺序会基于对该对象调用 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">Object.values()</font>`<font style="color:rgb(33, 53, 71);"> 的返回值来决定。</font>
+<font style="color:rgb(33, 53, 71);">可以使用 </font>`v-for`<font style="color:rgb(33, 53, 71);"> 来遍历一个对象的所有属性。遍历的顺序会基于对该对象调用 </font>`Object.values()`<font style="color:rgb(33, 53, 71);"> 的返回值来决定。</font>
 
-```plain
+```vue
 const myObject = reactive({
   title: 'How to do lists in Vue',
   author: 'Jane Doe',
@@ -704,7 +704,7 @@ const myObject = reactive({
 })
 ```
 
-```plain
+```vue
 <ul>
   <li v-for="value in myObject">
     {{ value }}
@@ -714,7 +714,7 @@ const myObject = reactive({
 
 <font style="color:rgb(33, 53, 71);">可以通过提供第二个参数表示属性名 (例如 key)：</font>
 
-```plain
+```vue
 <li v-for="(value, key) in myObject">
   {{ key }}: {{ value }}
 </li>
@@ -722,7 +722,7 @@ const myObject = reactive({
 
 <font style="color:rgb(33, 53, 71);">第三个参数表示位置索引：</font>
 
-```plain
+```vue
 <li v-for="(value, key, index) in myObject">
   {{ index }}. {{ key }}: {{ value }}
 </li>
@@ -783,7 +783,7 @@ const myObject = reactive({
 
 **<font style="color:rgb(33, 53, 71);background-color:rgb(249, 249, 249);">注意</font>**
 
-`key`**<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);"> </font>****<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);">在这里是一个通过</font>****<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);"> </font>**`v-bind`**<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);"> </font>****<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);">绑定的特殊 attribute。请不要和</font>**[**<font style="color:rgb(66, 184, 131);background-color:rgb(249, 249, 249);">在v-for中使用对象</font>**](https://cn.vuejs.org/guide/essentials/list.html#v-for-with-an-object)**<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);">里所提到的对象属性名相混淆。</font>**
+`key`**<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);"> </font>**<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);">在这里是一个通过</font>**<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);"> </font>**`v-bind`<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);">绑定的特殊 attribute。请不要和</font>**[**<font style="color:rgb(66, 184, 131);background-color:rgb(249, 249, 249);">在v-for中使用对象</font>**](https://cn.vuejs.org/guide/essentials/list.html#v-for-with-an-object)**<font style="color:rgba(0, 0, 0, 0.55);background-color:rgb(249, 249, 249);">里所提到的对象属性名相混淆。</font>**
 
 **<font style="color:rgb(33, 53, 71);">推荐在任何可行的时候为 </font>**`v-for`**<font style="color:rgb(33, 53, 71);"> 提供一个 </font>**`key`**<font style="color:rgb(33, 53, 71);"> attribute，除非所迭代的 DOM 内容非常简单 (例如：不包含组件或有状态的 DOM 元素)，或者你想有意采用默认行为来提高性能。</font>**
 
@@ -887,7 +887,7 @@ function warn(message, event) {
 + `.once`<font style="color:rgb(71, 101, 130);">：事件最多被执行一次</font>
 + `.passive`
 
-```plain
+```vue
 <!-- 单击事件将停止传递 -->
 <a @click.stop="doThis"></a>
 
@@ -908,14 +908,14 @@ function warn(message, event) {
 ### 按键修饰符
 <font style="color:rgb(33, 53, 71);">在监听键盘事件时，我们经常需要检查特定的按键。Vue 允许在 </font>`v-on`<font style="color:rgb(33, 53, 71);"> 或 </font>`@`<font style="color:rgb(33, 53, 71);"> 监听按键事件时添加按键修饰符。</font>
 
-```plain
+```Vue
 <!-- 仅在 `key` 为 `Enter` 时调用 `submit` -->
 <input @keyup.enter="submit" />
 ```
 
 <font style="color:rgb(33, 53, 71);">你可以直接使用 </font>[<font style="color:rgb(66, 184, 131);">KeyboardEvent.key</font>](https://developer.mozilla.org/zh-CN/docs/Web/API/UI_Events/Keyboard_event_key_values)<font style="color:rgb(33, 53, 71);"> 暴露的按键名称作为修饰符，但需要转为 kebab-case 形式。</font>
 
-```plain
+```Vue
 <input @keyup.page-down="onPageDown" />
 ```
 
@@ -944,7 +944,7 @@ function warn(message, event) {
 
 <font style="color:rgb(33, 53, 71);">举例来说：</font>
 
-```plain
+```Vue
 <!-- Alt + Enter -->
 <input @keyup.alt.enter="clear" />
 
@@ -1066,7 +1066,7 @@ function warn(message, event) {
   false-value="no" />
 ```
 
-`true-value`**<font style="color:rgb(33, 53, 71);"> 和 </font>**`false-value`**<font style="color:rgb(33, 53, 71);"> 是 Vue 特有的 attributes，仅支持和 </font>**`**<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-model</font>**`**<font style="color:rgb(33, 53, 71);"> 配套使用。这里 </font>**`**<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">toggle</font>**`**<font style="color:rgb(33, 53, 71);"> 属性的值会在选中时被设为 </font>**`**<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">'yes'</font>**`**<font style="color:rgb(33, 53, 71);">，取消选择时设为 </font>**`**<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">'no'</font>**`**<font style="color:rgb(33, 53, 71);">。</font>**<font style="color:rgb(33, 53, 71);">你同样可以通过 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-bind</font>`<font style="color:rgb(33, 53, 71);"> 将其绑定为其他动态值：</font>
+`true-value`**<font style="color:rgb(33, 53, 71);"> 和 </font>**`false-value`**<font style="color:rgb(33, 53, 71);"> 是 Vue 特有的 attributes，仅支持和 </font>**`v-model`**<font style="color:rgb(33, 53, 71);"> 配套使用。这里 </font>**`toggle`**<font style="color:rgb(33, 53, 71);"> 属性的值会在选中时被设为 </font>**`'yes'`**<font style="color:rgb(33, 53, 71);">，取消选择时设为 </font>**`'no'`**<font style="color:rgb(33, 53, 71);">。</font>**<font style="color:rgb(33, 53, 71);">你同样可以通过 </font>`v-bind`<font style="color:rgb(33, 53, 71);"> 将其绑定为其他动态值：</font>
 
 ```vue
 <input
@@ -1082,7 +1082,7 @@ function warn(message, event) {
 <input type="radio" v-model="pick" :value="second" />
 ```
 
-`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">pick</font>`<font style="color:rgb(33, 53, 71);"> 会在第一个按钮选中时被设为 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">first</font>`<font style="color:rgb(33, 53, 71);">，在第二个按钮选中时被设为 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">second</font>`<font style="color:rgb(33, 53, 71);">。</font>
+`pick`<font style="color:rgb(33, 53, 71);"> 会在第一个按钮选中时被设为 </font>`first`<font style="color:rgb(33, 53, 71);">，在第二个按钮选中时被设为 </font>`second`<font style="color:rgb(33, 53, 71);">。</font>
 
 #### <font style="color:rgb(33, 53, 71);">选择器选项</font>
 ```vue
@@ -1092,11 +1092,11 @@ function warn(message, event) {
 </select>
 ```
 
-`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-model</font>`<font style="color:rgb(33, 53, 71);"> 同样也支持非字符串类型的值绑定！在上面这个例子中，当某个选项被选中，</font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">selected</font>`<font style="color:rgb(33, 53, 71);"> 会被设为该对象字面量值 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">{ number: 123 }</font>`<font style="color:rgb(33, 53, 71);">。</font>
+`v-model`<font style="color:rgb(33, 53, 71);"> 同样也支持非字符串类型的值绑定！在上面这个例子中，当某个选项被选中，</font>`selected`<font style="color:rgb(33, 53, 71);"> 会被设为该对象字面量值 </font>`{ number: 123 }`<font style="color:rgb(33, 53, 71);">。</font>
 
 ### <font style="color:rgb(33, 53, 71);"> 修饰符</font>
 #### `.lazy`
-<font style="color:rgb(33, 53, 71);">默认情况下，</font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-model</font>`<font style="color:rgb(33, 53, 71);"> 会在每次 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">input</font>`<font style="color:rgb(33, 53, 71);"> 事件后更新数据。可以</font>**<font style="color:rgb(33, 53, 71);">添加 </font>**`**<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">lazy</font>**`**<font style="color:rgb(33, 53, 71);"> 修饰符来改为在每次 </font>**`**<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">change</font>**`**<font style="color:rgb(33, 53, 71);"> 事件后更新数据</font>**<font style="color:rgb(33, 53, 71);">：</font>
+<font style="color:rgb(33, 53, 71);">默认情况下，</font>`v-model`<font style="color:rgb(33, 53, 71);"> 会在每次 </font>`input`<font style="color:rgb(33, 53, 71);"> 事件后更新数据。可以</font>**<font style="color:rgb(33, 53, 71);">添加 </font>**`lazy`**<font style="color:rgb(33, 53, 71);"> 修饰符来改为在每次 </font>**`change`**<font style="color:rgb(33, 53, 71);"> 事件后更新数据</font>**<font style="color:rgb(33, 53, 71);">：</font>
 
 ```vue
 <!-- 在 "change" 事件后同步更新而不是 "input" -->
@@ -1104,18 +1104,18 @@ function warn(message, event) {
 ```
 
 #### `.number`
-<font style="color:rgb(33, 53, 71);">想</font>**<font style="color:rgb(33, 53, 71);">让用户输入自动转换为数字</font>**<font style="color:rgb(33, 53, 71);">，你可以在 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-model</font>`<font style="color:rgb(33, 53, 71);"> 后添加 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">.number</font>`<font style="color:rgb(33, 53, 71);"> 修饰符来管理输入：</font>
+<font style="color:rgb(33, 53, 71);">想</font>**<font style="color:rgb(33, 53, 71);">让用户输入自动转换为数字</font>**<font style="color:rgb(33, 53, 71);">，你可以在 </font>`v-model`<font style="color:rgb(33, 53, 71);"> 后添加 </font>`.number`<font style="color:rgb(33, 53, 71);"> 修饰符来管理输入：</font>
 
 ```vue
 <input v-model.number="age" />
 ```
 
-**<font style="color:rgb(33, 53, 71);">如果该值无法被 </font>**`**<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">parseFloat()</font>**`**<font style="color:rgb(33, 53, 71);"> 处理，那么将返回原始值。特别是当输入为空时 (例如用户清空输入字段之后)，会返回一个空字符串</font>**<font style="color:rgb(33, 53, 71);">。这种行为与 </font>[<font style="color:rgb(66, 184, 131);">DOM 属性 valueAsNumber</font>](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLInputElement#valueasnumber)<font style="color:rgb(33, 53, 71);"> 有所不同。</font>
+**<font style="color:rgb(33, 53, 71);">如果该值无法被 </font>**`parseFloat()`**<font style="color:rgb(33, 53, 71);"> 处理，那么将返回原始值。特别是当输入为空时 (例如用户清空输入字段之后)，会返回一个空字符串</font>**<font style="color:rgb(33, 53, 71);">。这种行为与 </font>[<font style="color:rgb(66, 184, 131);">DOM 属性 valueAsNumber</font>](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLInputElement#valueasnumber)<font style="color:rgb(33, 53, 71);"> 有所不同。</font>
 
-`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">number</font>`<font style="color:rgb(33, 53, 71);"> 修饰符会在输入框有 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">type="number"</font>`<font style="color:rgb(33, 53, 71);"> 时自动启用。</font>
+`number`<font style="color:rgb(33, 53, 71);"> 修饰符会在输入框有 </font>`type="number"`<font style="color:rgb(33, 53, 71);"> 时自动启用。</font>
 
 #### `.trim`
-<font style="color:rgb(33, 53, 71);">想要默认自动去除用户输入内容中两端的空格，你可以在 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">v-model</font>`<font style="color:rgb(33, 53, 71);"> 后添加 </font>`<font style="color:rgb(71, 101, 130);background-color:rgb(241, 241, 241);">.trim</font>`<font style="color:rgb(33, 53, 71);"> 修饰符：</font>
+<font style="color:rgb(33, 53, 71);">想要默认自动去除用户输入内容中两端的空格，你可以在 </font>`v-model`<font style="color:rgb(33, 53, 71);"> 后添加 </font>`.trim`<font style="color:rgb(33, 53, 71);"> 修饰符：</font>
 
 ```vue
 <input v-model.trim="msg" />
@@ -1186,7 +1186,7 @@ watch([x, () => y.value], ([newX, newY]) => {
 
 **<font style="color:rgb(33, 53, 71);">注：不能直接侦听响应式对象的属性值</font>**
 
-```vue
+```Vue
 const obj = reactive({ count: 0 })
 
 // 错误，因为 watch() 得到的参数是一个 number
@@ -1828,4 +1828,206 @@ emit('enlarge-text')
 
 <font style="color:rgb(33, 53, 71);">当使用 </font>`<component :is="...">`<font style="color:rgb(33, 53, 71);"> 来在多个组件间作切换时，被切换掉的组件会被卸载。我们可以通过 </font>[<font style="color:rgb(66, 184, 131);"><KeepAlive>组件</font>](https://cn.vuejs.org/guide/built-ins/keep-alive.html)<font style="color:rgb(33, 53, 71);">强制被切换掉的组件仍然保持“存活”的状态。</font>
 
-#### <font style="color:rgb(33, 53, 71);">DOM</font>
+## 生命周期
+
+### 注册周期钩子
+
+`onMounted` 钩子可以用来在组件完成初始渲染并创建 DOM 节点后运行代码：
+
+```Vue
+<script setup>
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  console.log(`the component is now mounted.`)
+})
+</script>
+```
+
+当调用 `onMounted` 时，Vue 会自动将回调函数注册到当前正被初始化的组件实例上。
+
+### 生命周期图示
+
+下面是实例生命周期的图表。你现在并不需要完全理解图中的所有内容，但以后它将是一个有用的参考。
+
+![组件生命周期图示](https://cn.vuejs.org/assets/lifecycle_zh-CN.W0MNXI0C.png)
+
+# 深入组件
+
+## 组件注册
+
+一个 Vue 组件在使用前需要先被“注册”，这样 Vue 才能在渲染模板时找到其对应的实现。**组件注册有两种方式：全局注册和局部注册。**
+
+### 全局注册
+
+可以使用 [Vue 应用实例](https://cn.vuejs.org/guide/essentials/application.html)的 `.component()` 方法，让组件在当前 Vue 应用中全局可用。
+
+```vue
+import { createApp } from 'vue'
+
+const app = createApp({})
+
+app.component(
+  // 注册的名字
+  'MyComponent',
+  // 组件的实现
+  {
+    /* ... */
+  }
+)
+```
+
+### 局部注册
+
+全局注册虽然很方便，但有以下几个问题：
+
+1. **全局注册，但并没有被使用的组件无法在生产打包时被自动移除 (也叫“tree-shaking”)。**如果你全局注册了一个组件，即使它并没有被实际使用，它仍然会出现在打包后的 JS 文件中。
+2. **全局注册在大型项目中使项目的依赖关系变得不那么明确。**在父组件中使用子组件时，不太容易定位子组件的实现。和使用过多的全局变量一样，这可能会影响应用长期的可维护性。
+
+相比之下，局部注册的组件需要在使用它的父组件中显式导入，并且只能在该父组件中使用。它的优点是使组件之间的依赖关系更加明确，并且对 tree-shaking 更加友好。
+
+在使用 `<script setup>` 的单文件组件中，导入的组件可以直接在模板中使用，无需注册：
+
+```vue
+<script setup>
+import ComponentA from './ComponentA.vue'
+</script>
+
+<template>
+  <ComponentA />
+</template>
+```
+
+如果没有使用 `<script setup>`，则需要使用 `components` 选项来显式注册：
+
+```vue
+import ComponentA from './ComponentA.js'
+
+export default {
+  components: {
+    ComponentA
+  },
+  setup() {
+    // ...
+  }
+}
+```
+
+## Props
+
+### Props声明
+
+一个组件需要显式声明它所接受的 props，这样 Vue 才能知道外部传入的哪些是 props，哪些是透传 attribute。
+
+在使用 `<script setup>` 的单文件组件中，props 可以使用 `defineProps()` 宏来声明：
+
+```vue
+<script setup>
+const props = defineProps(['foo'])
+
+console.log(props.foo)
+</script>
+```
+
+在没有使用 `<script setup>` 的组件中，props 可以使用 [`props`](https://cn.vuejs.org/api/options-state.html#props) 选项来声明：
+
+```vue
+export default {
+  props: ['foo'],
+  setup(props) {
+    // setup() 接收 props 作为第一个参数
+    console.log(props.foo)
+  }
+}
+```
+
+注意传递给 `defineProps()` 的参数和提供给 `props` 选项的值是相同的，两种声明方式背后其实使用的都是 props 选项。
+
+### 响应式Props解构
+
+Vue 的响应系统基于属性访问跟踪状态的使用情况。例如，在计算属性或侦听器中访问 `props.foo` 时，`foo` 属性将被跟踪为依赖项。
+
+```vue
+const { foo } = defineProps(['foo'])
+
+watchEffect(() => {
+  // 在 3.5 之前只运行一次
+  // 在 3.5+ 中在 "foo" prop 变化时重新执行
+  console.log(foo)
+})
+```
+
+```vue
+const props = defineProps(['foo'])
+
+watchEffect(() => {
+  // `foo` 由编译器转换为 `props.foo`
+  console.log(props.foo)
+})
+```
+
+### 传递Prop的细节
+
+#### Prop名字格式
+
+如果一个 prop 的名字很长，应使用 camelCase 形式，因为它们是合法的 JavaScript 标识符，可以直接在模板的表达式中使用，也可以避免在作为属性 key 名时必须加上引号。
+
+```vue
+defineProps({
+  greetingMessage: String
+})
+```
+
+```
+<span>{{ greetingMessage }}</span>
+```
+
+可以在向子组件传递 props 时使用 camelCase 形式 (使用 [DOM 内模板](https://cn.vuejs.org/guide/essentials/component-basics.html#in-dom-template-parsing-caveats)时例外)，但实际上为了和 HTML attribute 对齐，通常会将其写为 kebab-case 形式：
+
+```
+<MyComponent greeting-message="hello" />
+```
+
+#### 静态 vs 动态Props
+
+静态值形式的 props：
+
+```vue
+<BlogPost title="My journey with Vue" />
+```
+
+还有使用 `v-bind` 或缩写 `:` 来进行动态绑定的 props：
+
+```vue
+<!-- 根据一个变量的值动态传入 -->
+<BlogPost :title="post.title" />
+
+<!-- 根据一个更复杂表达式的值动态传入 -->
+<BlogPost :title="post.title + ' by ' + post.author.name" />
+```
+
+#### 传递不同的值类型
+
+- Number
+- Boolean
+- Array
+- Object
+
+#### 使用一个对象绑定多个Prop
+
+想要将一个对象的所有属性都当作 props 传入，你可以使用[没有参数的 `v-bind`](https://cn.vuejs.org/guide/essentials/template-syntax.html#dynamically-binding-multiple-attributes)，即只使用 `v-bind` 而非 `:prop-name`。例如，这里有一个 `post` 对象：
+
+```
+const post = {
+  id: 1,
+  title: 'My Journey with Vue'
+}
+<BlogPost v-bind="post" />
+```
+
+### 单向数据流
+
+所有的 props 都遵循着**单向绑定**原则，props 因父组件的更新而变化，自然地将新的状态向下流往子组件，而不会逆向传递。
+
+todo
+
