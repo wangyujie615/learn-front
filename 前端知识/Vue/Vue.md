@@ -83,6 +83,58 @@ app.component('TodoDeleteButton', TodoDeleteButton)
 
 <font style="color:#DF2A3F;">在底层机制中，</font>**<font style="color:#DF2A3F;">Vue 会将模板编译成高度优化的 JavaScript 代码</font>**<font style="color:#DF2A3F;">。结合响应式系统，当应用状态变更时，Vue 能够智能地推导出需要重新渲染的组件的最少数量，并应用最少的 DOM 操作。</font>
 
+## 模板编译原理
+
+Vue中的模板template无法被浏览器解析并渲染，因为这不属于浏览器的标准，不是正确的HTML语法，**所以需要将template转化成一个JavaScript函数，这样浏览器就可以执行这一个函数并渲染出对应的HTML元素，就可以让视图跑起来了，这一个转化的过程，就成为模板编译**。模板编译又分三个阶段，**解析parse，优化optimize，生成generate**，最终生成可执行函数render。
+
+- **解析阶段**：使用大量的正则表达式对template字符串进行**解析**，将标签、指令、属性等转化为**抽象语法树AST**。
+- **优化阶段**：遍历AST，**找到其中的一些静态节点并进行标记**，方便在页面重渲染的时候进行diff比较时，直接跳过这一些静态节点，优化runtime的性能。
+- **生成阶段**：将最终的**AST转化为render函数字符串**。
+
+vue 在模版编译版本的码中会执行 compileToFunctions 将template转化为render函数：
+
+```
+// 将模板编译为render函数
+const { render, staticRenderFns } = compileToFunctions(template,options//省略}, this)
+```
+
+CompileToFunctions中的主要逻辑如下∶
+
+**（1）调用parse方法将template转化为ast（抽象语法树）**
+
+```javascript
+constast = parse(template.trim(), options)
+```
+
+- **parse的目标**：把tamplate转换为AST树，它是一种用 JavaScript对象的形式来描述整个模板。
+- **解析过程**：利用正则表达式顺序解析模板，当解析到开始标签、闭合标签、文本的时候都会分别执行对应的 回调函数，来达到构造AST树的目的。
+
+AST元素节点总共三种类型：type为1表示普通元素、2为表达式、3为纯文本
+
+
+
+**（2）对静态节点做优化**
+
+```javascript
+optimize(ast,options)
+```
+
+这个过程主要分析出哪些是静态节点，给其打一个标记，为后续更新渲染可以直接跳过静态节点做优化
+
+
+
+深度遍历AST，查看每个子树的节点元素是否为静态节点或者静态节点根。如果为静态节点，他们生成的DOM永远不会改变，这对运行时模板更新起到了极大的优化作用。
+
+
+
+**（3）生成代码**
+
+```javascript
+const code = generate(ast, options)
+```
+
+generate将ast抽象语法树编译成 render字符串并将静态部分放到 staticRenderFns 中，最后通过 `new Function(`` render``)` 生成render函数。
+
 ### <font style="color:#000000;">文本插值</font>
 <font style="color:#DF2A3F;">最基本的数据绑定形式是文本插值，它使用的是“Mustache”语法 (即双大括号)：</font>
 
@@ -228,6 +280,17 @@ const objectOfAttrs = {
 ![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1747316080047-1d1abd0d-c6d7-499f-9618-067a03fddd58.png)
 
 ## 响应式基础
+
+### data是一个函数的原因
+
+Vue组件可能存在多个实例，如果使用**对象形式定义data，则会导致它们共用一个data对象，那么状态变更将会影响所有组件实例，这是不合理的**；**采用函数形式定义，在initData时会将其作为工厂函数返回全新data对象，有效规避多实例之间状态污染问题**。而在Vue根实例创建过程中则不存在该限制，也是因为根实例只能有一个，不需要担心这种情况。
+
+### 响应式的原理
+
+当一个Vue实例创建时，Vue会遍历data中的属性，**用 Object.defineProperty（vue3.0使用proxy ）将它们转为 getter/setter，并且在内部追踪相关依赖，在属性被访问和修改时通知变化**。 **每个组件实例都有相应的 watcher 程序实例**，它会在组件渲染的过程中把属性记录为依赖，之后当依赖项的setter被调用时，会通知watcher重新计算，从而致使它关联的组件得以更新。
+
+![img](https://cdn.nlark.com/yuque/0/2021/png/1500604/1620128979608-f7465ffc-9411-43e3-a6bc-96ab44dd77df.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_23%2Ctext_5b6u5L-h5YWs5LyX5Y-377ya5YmN56uv5YWF55S15a6d%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+
 ### ref()
 <font style="color:#000000;">在</font>**<font style="color:#000000;">组合式 API</font>**<font style="color:#000000;"> 中，推荐使用 </font>[<font style="color:#000000;">ref()</font>](https://cn.vuejs.org/api/reactivity-core.html#ref)<font style="color:#000000;"> 函数来声明响应式状态：</font>
 
@@ -291,9 +354,10 @@ const myRef = {
 ```
 
 #### 深层响应性
+
 <font style="color:rgb(33, 53, 71);">Ref可以持有任何类型的值，包括深层嵌套的对象、数组或者 JavaScript 内置的数据结构。</font>
 
-<font style="color:rgb(33, 53, 71);">Ref会使它的值具有深层响应性。这意味着即使改变嵌套对象或数组时，变化也会被检测到：</font>
+<font style="color:rgb(33, 53, 71);">Ref会使它的值具有深层响应性。这意味着**即使改变嵌套对象或数组时，变化也会被检测到**：</font>
 
 ```javascript
 import { ref } from 'vue'
@@ -312,8 +376,10 @@ function mutateDeeply() {
 
 <font style="color:rgb(33, 53, 71);">也可以通过 </font>[<font style="color:rgb(66, 184, 131);">shallow ref</font>](https://cn.vuejs.org/api/reactivity-advanced.html#shallowref)<font style="color:rgb(33, 53, 71);"> 来放弃深层响应性。对于浅层 ref，只有 </font>`.value`<font style="color:rgb(33, 53, 71);"> 的访问会被追踪。</font>**<font style="color:rgb(33, 53, 71);">浅层 ref 可以用于避免对大型数据的响应性开销来优化性能、或者有外部库管理其内部状态的情况。</font>**
 
-#### <font style="color:rgb(33, 53, 71);">DOM的更新机制</font>
-<font style="color:rgb(33, 53, 71);">当你修改了响应式状态时，DOM 会被自动更新。但是需要注意的是，</font>**<font style="color:rgb(33, 53, 71);">DOM 更新不是同步的</font>**<font style="color:rgb(33, 53, 71);">。Vue 会</font>**<font style="color:rgb(33, 53, 71);">在“nextTick”更新周期中缓冲所有状态的修改，以确保不管你进行了多少次状态修改，每个组件都只会被更新一次。</font>**
+#### <font style="color:rgb(33, 53, 71);">DOM的更新机制</font>(重要)
+<font style="color:rgb(33, 53, 71);">当你修改了响应式状态时，DOM 会被自动更新。但是需要注意的是，</font>**<font style="color:rgb(33, 53, 71);">DOM 更新不是同步的</font>**<font style="color:rgb(33, 53, 71);">。Vue 会</font>**<font style="color:rgb(33, 53, 71);">在“nextTick”更新周期中缓冲所有状态的修改，以确保不管你进行了多少次状态修改，每个组件都只会被更新一次。</font>**Vue 在更新 DOM 时是异步执行的。只要侦听到数据变化， Vue 将开启一个队列，并缓冲在同一事件循环中发生的所有数据变更。
+
+
 
 <font style="color:rgb(33, 53, 71);">要等待 DOM 更新完成后再执行额外的代码，可以使用 </font>[<font style="color:rgb(66, 184, 131);">nextTick()</font>](https://cn.vuejs.org/api/general.html#nexttick)<font style="color:rgb(33, 53, 71);"> 全局 API：</font>
 
@@ -327,7 +393,26 @@ async function increment() {
 }
 ```
 
+#### nextTick原理及作用
+
+nextTick 的核心是利用了如 Promise 、MutationObserver、setImmediate、setTimeout的原生 JavaScript 方法来模拟对应的微/宏任务的实现，**本质是为了利用 JavaScript 的这些异步回调任务队列来实现 Vue 框架中自己的异步回调队列**。
+
+
+
+nextTick 是典型的将底层 JavaScript 执行原理应用到具体案例中的示例，引入异步更新队列机制的原因∶
+
+- **如果是同步更新，则多次对一个或多个属性赋值，会频繁触发 UI/DOM 的渲染，可以减少一些无用渲染**
+- 同时由于 VirtualDOM 的引入，每一次状态发生变化后，状态变化的信号会发送给组件，组件内部使用 VirtualDOM 进行计算得出需要更新的具体的 DOM 节点，然后对 DOM 进行更新操作，每次**更新状态后的渲染过程需要更多的计算**，而这种无用功也将浪费更多的性能，所以异步渲染变得更加至关重要。
+
+所以，在以下情况下，会用到nextTick：
+
+- 在**数据变化后执行的某个操作，而这个操作需要使用随数据变化而变化的DOM结构的时候**，这个操作就需要方法在`nextTick()`的回调函数中。
+- 在vue生命周期中，**如果在created()钩子进行DOM操作，也一定要放在`nextTick()`的回调函数中。**
+
+因为在created()钩子函数中，页面的DOM还未渲染，这时候也没办法操作DOM，所以，此时如果想要操作DOM，必须将操作的代码放在`nextTick()`的回调函数中。
+
 ### reactive()
+
 <font style="color:rgb(33, 53, 71);">还有另一种声明响应式状态的方式，即使用 </font>`reactive()`<font style="color:rgb(33, 53, 71);"> API。与将内部值包装在特殊对象中的 ref 不同，</font>`reactive()`<font style="color:rgb(33, 53, 71);"> 将</font>**<font style="color:rgb(33, 53, 71);">使对象本身具有响应性</font>**<font style="color:rgb(33, 53, 71);">：</font>
 
 ```javascript
@@ -365,7 +450,7 @@ console.log(reactive(proxy) === proxy) // true
 `reactive()`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">API 有一些局限性：</font>
 
 1. **<font style="color:rgb(33, 53, 71);">有限的值类型</font>**<font style="color:rgb(33, 53, 71);">：它</font>**<font style="color:rgb(33, 53, 71);">只能用于对象类型 (对象、数组和如 </font>**`Map`**<font style="color:rgb(33, 53, 71);">、</font>**`Set`**<font style="color:rgb(33, 53, 71);"> 这样的</font>**[**<font style="color:rgb(66, 184, 131);">集合类型</font>**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects#keyed_collections)**<font style="color:rgb(33, 53, 71);">)。</font>**<font style="color:rgb(33, 53, 71);">它不能持有如 </font>`string`<font style="color:rgb(33, 53, 71);">、</font>`number`<font style="color:rgb(33, 53, 71);"> 或 </font>`boolean`<font style="color:rgb(33, 53, 71);"> 这样的</font>[<font style="color:rgb(66, 184, 131);">原始类型</font>](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)<font style="color:rgb(33, 53, 71);">。</font>
-2. **<font style="color:rgb(33, 53, 71);">不能替换整个对象</font>**<font style="color:rgb(33, 53, 71);">：由于 Vue 的响应式跟踪是通过属性访问实现的，因此我们必须始终保持对响应式对象的相同引用。这意味着我们不能轻易地“替换”响应式对象，因为这样的话与第一个引用的响应性连接将丢失：</font>
+2. **<font style="color:rgb(33, 53, 71);">不能替换整个对象</font>**<font style="color:rgb(33, 53, 71);">：由于 Vue 的响应式跟踪是通过属性访问实现的，因此我们必须始终保持对响应式对象的相同引用。这意味着我们不能轻易地“替换”响应式对象，因为这样的话与第一个引用的**响应性连接将丢失**：</font>
 
 ```plain
 let state = reactive({ count: 0 })
@@ -393,7 +478,71 @@ callSomeFunction(state.count)
 
 <font style="color:rgb(33, 53, 71);">由于这些限制，我们建议使用 </font>`ref()`<font style="color:rgb(33, 53, 71);"> 作为声明响应式状态的主要 API。</font>
 
-## <font style="color:rgb(33, 53, 71);">计算属性</font>
+### Object.defineProperty()数据劫持的缺陷
+
+在对一些属性进行操作时，使用这种方法无法拦截，比如通过下标方式修改数组数据或者给对象新增属性，这都不能触发组件的重新渲染，因为 Object.defineProperty 不能拦截到这些操作。**对于数组而言，大部分操作都是拦截不到的**。
+
+为了让Vue能监听到数组数据的其中的变化。
+
+![img](https://cdn.nlark.com/yuque/0/2020/png/1500604/1604019269329-d88e91cf-b33d-4b2d-b014-e5739e9b7dbc.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_21%2Ctext_5b6u5L-h5YWs5LyX5Y-377ya5YmN56uv5YWF55S15a6d%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+
+那Vue是如何实现让这些数组方法实现元素的实时更新的呢，下面是Vue中对这些方法的封装：
+
+```javascript
+// 缓存数组原型
+const arrayProto = Array.prototype;
+// 实现 arrayMethods.__proto__ === Array.prototype
+export const arrayMethods = Object.create(arrayProto);
+// 需要进行功能拓展的方法
+const methodsToPatch = [
+  "push",
+  "pop",
+  "shift",
+  "unshift",
+  "splice",
+  "sort",
+  "reverse"
+];
+
+/**
+ * Intercept mutating methods and emit events
+ */
+methodsToPatch.forEach(function(method) {
+  // 缓存原生数组方法
+  const original = arrayProto[method];
+  def(arrayMethods, method, function mutator(...args) {
+    // 执行并缓存原生数组功能
+    const result = original.apply(this, args);
+    // 响应式处理
+    const ob = this.__ob__;
+    let inserted;
+    switch (method) {
+    // push、unshift会新增索引，所以要手动observer
+      case "push":
+      case "unshift":
+        inserted = args;
+        break;
+      // splice方法，如果传入了第三个参数，也会有索引加入，也要手动observer。
+      case "splice":
+        inserted = args.slice(2);
+        break;
+    }
+    // 
+    if (inserted) ob.observeArray(inserted);// 获取插入的值，并设置响应式监听
+    // notify change
+    ob.dep.notify();// 通知依赖更新
+    // 返回原生数组方法的执行结果
+    return result;
+  });
+});
+```
+
+简单来说就是，**重写了数组中的那些原生方法，首先获取到这个数组的Observer对象，如果有新的值，就调用observeArray继续对新的值观察变化（也就是通过`target__proto__ == arrayMethods`来改变了数组实例的型），然后手动调用notify，通知渲染watcher，执行update。**
+
+## <font style="color:rgb(33, 53, 71);">
+
+## 计算属性</font>
+
 ```javascript
 <script setup>
 import { reactive, computed } from 'vue'
@@ -424,7 +573,7 @@ const publishedBooksMessage = computed(() => {
 ### 计算属性缓存 vs 方法
 <font style="color:rgb(33, 53, 71);">将同样的函数定义为一个方法而不是计算属性，两种方式在结果上确实是完全相同的，然而，不同之处在于</font>**<font style="color:rgb(33, 53, 71);">计算属性值会基于其响应式依赖被缓存</font>**<font style="color:rgb(33, 53, 71);">。</font>**<font style="color:rgb(33, 53, 71);">一个计算属性仅会在其响应式依赖更新时才重新计算</font>**<font style="color:rgb(33, 53, 71);">。这意味着只要 </font>`author.books`<font style="color:rgb(33, 53, 71);"> 不改变，无论多少次访问 </font>`publishedBooksMessage`<font style="color:rgb(33, 53, 71);"> 都会立即返回先前的计算结果，而不用重复执行 getter 函数。</font>
 
-<font style="color:rgb(33, 53, 71);">而函数是调用一次计算一次。</font>
+**<font style="color:rgb(33, 53, 71);">而函数是调用一次计算一次。</font>**
 
 #### <font style="color:rgb(33, 53, 71);">可写计算属性</font>
 **<font style="color:rgb(33, 53, 71);">计算属性默认是只读的。</font>**<font style="color:rgb(33, 53, 71);">当你尝试修改一个计算属性时，你会收到一个运行时警告。只在某些特殊场景中你可能才需要用到“可写”的属性，你可以通过同时提供 getter 和 setter 来创建：</font>
@@ -497,7 +646,36 @@ const alwaysSmall = computed({
 </script>
 ```
 
+### Computed与watch的区别
+
+**对于Computed：**
+
+- 它**支持缓存**，只有依赖的数据发生了变化，才会重新计算
+- **不支持异步**，当Computed中有异步操作时，无法监听数据的变化
+- computed的值会默认走缓存，计算属性是基于它们的响应式依赖进行缓存的，也就是基于data声明过，或者父组件传递过来的props中的数据进行计算的。
+- 如果一个属性是由其他属性计算而来的，这个属性依赖其他的属性，一般会使用computed
+- 如果computed属性的属性值是函数，那么默认使用get方法，函数的返回值就是属性的属性值；在computed中，属性有一个get方法和一个set方法，当数据发生变化时，会调用set方法。
+
+**对于Watch：**
+
+- 它**不支持缓存**，数据变化时，它就会触发相应的操作
+- **支持异步监听**
+- 监听的函数接收两个参数，第一个参数是最新的值，第二个是变化之前的值
+- 当一个属性发生变化时，就需要执行相应的操作
+- **监听数据必须是data中声明的或者父组件传递过来的props中的数据，当发生变化时，会触发其他操作，函数有两个的参数**：
+
+- - immediate：组件加载立即触发回调函数
+  - deep：深度监听，发现数据内部的变化，在复杂数据类型中使用，例如数组中的对象发生变化。**需要注意的是，deep无法监听到数组和对象内部的变化。**
+
+当想要执行**异步或者昂贵的操作以响应不断的变化时，就需要使用watch**。
+
+**总结：**
+
+- computed 计算属性 : 依赖其它属性值，并且 computed 的值有缓存，只有它依赖的属性值发生改变，下一次获取 computed 的值时才会重新计算 computed 的值。 
+- watch 侦听器 : 更多的是**观察**的作用，**无缓存性**，类似于某些数据的监听回调，每当监听的数据变化时都会执行回调进行后续操作。 
+
 ## 类与样式的绑定
+
 ### 绑定HTML Class
 #### 绑定对象
 ```javascript
@@ -638,7 +816,7 @@ const styleObject = reactive({
 
 `v-show`<font style="color:rgb(33, 53, 71);"> 不支持在 </font>`<template>`<font style="color:rgb(33, 53, 71);"> 元素上使用，也不能和 </font>`v-else`<font style="color:rgb(33, 53, 71);"> 搭配使用。</font>
 
-### `v-if`和`v-show`
+### `v-if`和`v-show`（区别）
 `v-if`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">是“真实的”按条件渲染，因为它确保了在切换时，条件区块内的事件监听器和子组件都会被销毁与重建。</font>
 
 `v-if`<font style="color:rgb(33, 53, 71);"> 也是</font>**<font style="color:rgb(33, 53, 71);">惰性</font>**<font style="color:rgb(33, 53, 71);">的：</font>**<font style="color:rgb(33, 53, 71);">如果在初次渲染时条件值为 false，则不会做任何事。条件区块只有当条件首次变为 true 时才被渲染</font>**<font style="color:rgb(33, 53, 71);">。</font>
@@ -647,8 +825,19 @@ const styleObject = reactive({
 
 <font style="color:rgb(33, 53, 71);">总的来说，</font>`v-if`**<font style="color:rgb(33, 53, 71);"> 有更高的切换开销，而 </font>**`v-show`**<font style="color:rgb(33, 53, 71);"> 有更高的初始渲染开销。因此，如果需要频繁切换，则使用 </font>**`v-show`**<font style="color:rgb(33, 53, 71);"> 较好；如果在运行时绑定条件很少改变，则 </font>**`v-if`**<font style="color:rgb(33, 53, 71);"> 会更合适</font>**<font style="color:rgb(33, 53, 71);">。</font>
 
+##### `v-if`、`v-show`、`v-html`的原理
+
+- v-if**会调用addIfCondition方法，生成vnode的时候会忽略对应节点，render的时候就不会渲染**；(条件为false,不会render)
+-  **v-show会生成vnode，render的时候也会渲染成真实节点，只是在render过程中会在节点的属性中修改show属性值，也就是常说的display**； (利用display)
+- v-html会先移除节点下的所有节点，调用html方法，**通过addProp添加innerHTML属性，归根结底还是设置innerHTML为v-html的值**。(通过addProp设置innerHTML)
+
 ### `v-if`和`v-for`
 <font style="color:rgb(33, 53, 71);">当 </font>`v-if`<font style="color:rgb(33, 53, 71);"> 和 </font>`v-for`<font style="color:rgb(33, 53, 71);"> 同时存在于一个元素上的时候，</font>`v-if`<font style="color:rgb(33, 53, 71);"> 会首先被执行。</font>
+
+- vue3是`v-if`优先于`v-for`
+- vue3是`v-if`低于`v-for`
+
+
 
 ## <font style="color:rgb(33, 53, 71);">列表渲染</font>
 ### `v-for`
@@ -880,10 +1069,10 @@ function warn(message, event) {
 
 <font style="color:rgb(33, 53, 71);">为解决这一问题，Vue 为</font><font style="color:rgb(33, 53, 71);"> </font>`v-on`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">提供了</font>**<font style="color:rgb(33, 53, 71);">事件修饰符</font>**<font style="color:rgb(33, 53, 71);">。修饰符是用</font><font style="color:rgb(33, 53, 71);"> </font>`.`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">表示的指令后缀，包含以下这些：</font>
 
-+ `.stop`<font style="color:rgb(71, 101, 130);">：阻止事件冒泡</font>
-+ `.prevent`<font style="color:rgb(71, 101, 130);">：阻止事件的默认行为</font>
-+ `.self`
-+ `.capture`
++ `.stop`<font style="color:rgb(71, 101, 130);">：阻止事件冒泡，等同于 JavaScript 中的 `event.stopPropagation()`</font>
++ `.prevent`<font style="color:rgb(71, 101, 130);">：阻止事件的默认行为，等同于 JavaScript 中的 `event.preventDefault()`</font>
++ `.self`：只会触发自己范围内的事件，不包含子元素；
++ `.capture`：与事件冒泡的方向相反，事件捕获由外到内；
 + `.once`<font style="color:rgb(71, 101, 130);">：事件最多被执行一次</font>
 + `.passive`
 
@@ -981,6 +1170,20 @@ function warn(message, event) {
 + <font style="color:rgb(33, 53, 71);">文本类型的</font><font style="color:rgb(33, 53, 71);"> </font>`<input>`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">和</font><font style="color:rgb(33, 53, 71);"> </font>`<textarea>`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">元素会绑定</font><font style="color:rgb(33, 53, 71);"> </font>`value`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">property 并侦听</font><font style="color:rgb(33, 53, 71);"> </font>`input`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">事件；</font>
 + `<input type="checkbox">`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">和</font><font style="color:rgb(33, 53, 71);"> </font>`<input type="radio">`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">会绑定</font><font style="color:rgb(33, 53, 71);"> </font>`checked`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">property 并侦听</font><font style="color:rgb(33, 53, 71);"> </font>`change`<font style="color:rgb(33, 53, 71);"> </font><font style="color:rgb(33, 53, 71);">事件；</font>
 + `<select>`<font style="color:rgb(33, 53, 71);"> 会绑定 </font>`value`<font style="color:rgb(33, 53, 71);"> property 并侦听 </font>`change`<font style="color:rgb(33, 53, 71);"> 事件。</font>
+
+### `v-model`双向数据绑定的原理(重要)
+
+Vue.js 是采用**数据劫持**结合**发布者-订阅者模式**的方式，**通过Object.defineProperty()来劫持各个属性的setter，getter，在数据变动时发布消息给订阅者，触发相应的监听回调**。主要分为以下几个步骤：
+
+1. 需要observer的**数据对象进行递归遍历**，包括子属性对象的属性，**都加上setter和getter这样的话**，给这个对象的某个值赋值，就会触发setter，那么就能监听到了数据变化。(**进行数据劫持**)
+2. **compile解析模板指令，将模板中的变量替换成数据**，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，**添加监听数据的订阅者**，一旦数据有变动，收到通知，更新视图。(为模板添加数据，绑定订阅者)
+3. Watcher订阅者是Observer和Compile之间通信的桥梁，主要做的事情是: 
+   - 在自身实例化时往属性**订阅器(dep)**里面添加自己 
+   - 自身必须**有一个update()方法**
+   - **待属性变动dep.notice()通知时，能调用自身的update()方法，并触发Compile中绑定的回调，则功成身退。**
+4. MVVM作为数据绑定的入口，整合Observer、Compile和Watcher三者，通过Observer来监听自己的model数据变化，通过Compile来解析编译模板指令，最终利用Watcher搭起Observer和Compile之间的通信桥梁，达到数据变化 -> 视图更新；视图交互变化(input) -> 数据model变更的双向绑定效果。
+
+![img](https://cdn.nlark.com/yuque/0/2021/png/1500604/1618656573096-ebdc520c-5d60-4d12-ad04-5df4ebbb5fe7.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_22%2Ctext_5b6u5L-h5YWs5LyX5Y-377ya5YmN56uv5YWF55S15a6d%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
 
 ### <font style="color:rgb(33, 53, 71);">基本用法</font>
 #### 文本
@@ -1852,6 +2055,17 @@ onMounted(() => {
 
 ![组件生命周期图示](https://cn.vuejs.org/assets/lifecycle_zh-CN.W0MNXI0C.png)
 
+Vue 实例有⼀个完整的⽣命周期，也就是从**开始创建、初始化数据、编译模版、挂载Dom -> 渲染、更新 -> 渲染、卸载 等⼀系列过程，称这是Vue的⽣命周期**。 
+
+1. **beforeCreate（创建前）**：数据观测和初始化事件还未开始，此时 data 的响应式追踪、event/watcher 都还没有被设置，也就是说**不能访问到data、computed、watch、methods上的方法和数据**。
+2. **created（创建后）** ：实例创建完成，实例上配置的 options 包括 data、computed、watch、methods 等都配置完成，但是此时渲染得节点还未挂载到 DOM，所以**不能访问到 `$el` 属性**。
+3. **beforeMount（挂载前）**：在挂载开始之前被调用，相关的render函数首次被调用。实例已完成以下的配置：**编译模板，把data里面的数据和模板生成html**。此时还没有挂载html到页面上。
+4. **mounted（挂载后）**：在el被新创建的 vm.$el 替换，并挂载到实例上去之后调用。实例已完成以下的配置：**用上面编译好的html内容替换el属性指向的DOM对象。完成模板中的html渲染到html 页面中**。此过程中进行ajax交互。
+5. **beforeUpdate（更新前）**：**响应式数据更新时调用，此时虽然响应式数据更新了**，但是对应的真实 DOM **还没有被渲染**。
+6. **updated（更新后）** ：在由于数据更改导致的虚拟DOM重新渲染和打补丁之后调用。此时 DOM 已经根据响应式数据的变化更新了。**调用时，组件 DOM已经更新，所以可以执行依赖于DOM的操作**。然而在大多数情况下，应该避免在此期间更改状态，因为这可能会导致更新无限循环。该钩子在服务器端渲染期间不被调用。
+7. **beforeDestroy（销毁前）**：实例销毁之前调用。这一步，实例仍然完全可用，`this` 仍能获取到实例。
+8. **destroyed（销毁后）**：实例销毁后调用，调用后，Vue 实例指示的所有东西都会解绑定，所有的事件监听器会被移除，所有的子实例也会被销毁。该钩子在服务端渲染期间不被调用。
+
 # 深入组件
 
 ## 组件注册
@@ -2030,4 +2244,186 @@ const post = {
 所有的 props 都遵循着**单向绑定**原则，props 因父组件的更新而变化，自然地将新的状态向下流往子组件，而不会逆向传递。
 
 todo
+
+
+
+# Vue性能优化
+
+**1）编码阶段**
+
+- 尽量减少data中的数据，data中的数据都会增加getter和setter，会收集对应的watcher
+- **v-if和v-for不能连用**
+- 如果需要使用v-for给每项元素绑定事件时使用事件代理
+- **SPA 页面采用keep-alive缓存组件**
+- 在更多的情况下，使用v-if替代v-show
+- key保证唯一
+- **使用路由懒加载、异步组件**
+- **防抖、节流**
+- 第三方模块按需导入
+- 长列表滚动到可视区域动态加载
+- **图片懒加载**
+
+**（2）SEO优化**
+
+- 预渲染
+- 服务端渲染SSR
+
+**（3）打包优化**
+
+- **压缩代码**
+- **Tree Shaking/Scope Hoisting**
+- **使用cdn加载第三方模块**
+- **多线程打包happypack**
+- splitChunks抽离公共文件
+- sourceMap优化
+
+**（4）用户体验**
+
+- 骨架屏
+- PWA
+- 还可以使用缓存(客户端缓存、服务端缓存)优化、服务端开启gzip压缩等。
+
+## keep-alive
+
+如果需要在组件切换的时候，**保存一些组件的状态防止多次渲染，就可以使用 keep-alive 组件包裹需要保存的组件**。
+
+**(1）keep-alive**
+
+keep-alive有以下三个属性：
+
+- include 字符串或正则表达式，只有**名称匹配的组件会被缓存**；
+- exclude 字符串或正则表达式，**任何名称匹配的组件都不会被缓存**；
+- max 数字，**最多可以缓存多少组件实例**。
+
+
+
+注意：keep-alive 包裹动态组件时，会缓存不活动的组件实例。
+
+**主要流程**
+
+1. **判断组件 name ，不在 include 或者在 exclude 中**，直接返回 vnode，说明该组件不被缓存。
+2. **获取组件实例 key ，如果有获取实例的 key，否则重新生成**。
+3. key生成规则，cid +"∶∶"+ tag ，仅靠cid是不够的，因为相同的构造函数可以注册为不同的本地组件。
+4. **如果缓存对象内存在，则直接从缓存对象中获取组件实例给 vnode ，不存在则添加到缓存对象中**。 
+5. 最大缓存数量，**当缓存组件数量超过 max 值时，清除 keys 数组内第一个组件**。
+
+keep-alive 具体是**通过 cache 数组缓存所有组件的 vnode 实例**。当 cache 内原有组件被使用时会将该组件 key 从 keys 数组中删除，然后 push 到 keys数组最后，以便清除最不常用组件
+
+## keep-alive的生命周期
+
+如果为一个组件包裹了 keep-alive，那么它**会多出两个生命周期：deactivated、activated。同时，beforeDestroy 和 destroyed 就不会再被触发了，因为组件不会被真正销毁。**
+
+**当组件被换掉时，会被缓存到内存中、触发 deactivated 生命周期；当组件被切回来时，再去缓存里找这个组件、触发 activated钩子函数。**
+
+# SPA应用
+
+**概念：**
+
+- SPA单页面应用（SinglePage Web Application），指**只有一个主页面的应用，一开始只需要加载一次js、css等相关资源。所有内容都包含在主页面，对每一个功能模块组件化。单页应用跳转，就是切换相关组件，仅仅刷新局部资源**。
+- MPA多页面应用 （MultiPage Application），指有**多个独立页面的应用，每个页面必须重复加载js、css等相关资源。多页应用跳转，需要整页资源刷新**。
+
+
+
+**区别：**
+
+![img](https://cdn.nlark.com/yuque/0/2021/jpeg/1500604/1609521413572-54d0bd0f-8ed6-4438-997a-c890e4cd9c5e.jpeg?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_29%2Ctext_5b6u5L-h5YWs5LyX5Y-377ya5YmN56uv5YWF55S15a6d%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+
+**SPA的优点：**
+
+- 用户体验好、快，内容的改变不需要重新加载整个页面，避免了不必要的跳转和重复渲染；
+- 基于上面一点，SPA 相对对服务器压力小；
+- 前后端职责分离，架构清晰，前端进行交互逻辑，后端负责数据处理；
+
+
+
+**SPA的缺点：**
+
+- **初次加载耗时多**：为实现单页 Web 应用功能及显示效果，需要在加载页面的时候将 JavaScript、CSS 统一加载，部分页面按需加载；
+- 前进后退路由管理：由于单页应用在一个页面中显示所有的内容，所以不能使用浏览器的前进后退功能，所有的页面切换需要自己建立堆栈管理；
+- **SEO 难度较大**：由于所有的内容都在一个页面中动态替换显示，所以在 SEO 上其有着天然的弱势。
+
+## SPA加速
+
+常见的几种SPA首屏优化方式
+
+- **减小入口文件体积**：路由懒加载，把不同路由对应的组件分割成不同的代码块，待路由被请求的时候会单独打包路由，使得入口文件变小，加载速度大大增加
+- **静态资源本地缓存**：采用`HTTP`缓存，采用`Service Worker`离线缓存，前端合理利用`localStorage`
+- **UI框架按需加载**：按需加载UI框架
+- **图片资源的压缩**
+- 组件重复打包
+- **开启GZip压缩**
+- **使用SSR**
+
+# Vue2和Vue3的区别
+
+## 1、双向数据绑定原理不同
+
+**vue2**：vue2的双向数据绑定是利用**ES5的一个APIObject.defineProperty()** 对数据进行劫持，结合发布订阅模式的方式来实现的。
+
+**vue3**：vue3中使用了**ES6的Proxy API**对数据代理。相比vue2.x，使用proxy的优势如下：
+
+- defineProperty只能监听某个属性，不能对全对象监听
+- 可以省去for in，闭包等内容来提升效率(直接绑定整个对象即可)
+- 可以监听数组，不用再去单独的对数组做特异性操作vue3.x可以检测到数组内部数据的变化。
+
+## 2、是否支持碎片
+
+**vue2**：vue2**不支持**碎片。
+
+**vue3**：vue3**支持碎片（Fragments）** ，就是说可以拥有多个根节点。
+
+## 3、API类型不同
+
+**vue2**：vue2使用**选项类型api**，选项型api在代码里分割了不同的属性：data,computed,methods等。
+
+**vue3**：vue3使用**合成型api**，新的合成型api能让我们使用方法来分割，相比于旧的api使用属性来分组，这样代码会更加简便和整洁。
+
+## 4、定义数据变量和方法不同
+
+**vue2**：vue2是把数据放入data中，在vue2中定义数据变量是**data(){}** ，创建的方法要在**methods:{}** 中。
+
+**vue3**：vue3就需要使用一个**新的setup()方法**，此方法在组件初始化构造的时候触发。使用以下三个步骤来建立反应性数据：
+
+- 从vue引入**reactive**；
+- 使用**reactive()** 方法来声明数据为响应性数据；
+- 使用setup()方法来返回我们的响应性数据，从而**template**可以获取这些响应性数据。
+
+## 5、生命周期钩子函数不同
+
+**vue2**：**vue2中的生命周期**：
+
+- beforeCreate 组件创建之前
+- created 组件创建之后
+- beforeMount 组价挂载到页面之前执行
+- mounted 组件挂载到页面之后执行
+- beforeUpdate 组件更新之前
+- updated 组件更新之后
+
+**vue3**：**vue3中的生命周期**：
+
+- **setup 开始创建组件**
+- onBeforeMount 组价挂载到页面之前执行
+- onMounted 组件挂载到页面之后执行
+- onBeforeUpdate 组件更新之前
+- onUpdated 组件更新之后
+
+而且vue3.x 生命周期在调用前需要先进行引入。除了这些钩子函数外，vue3.x还增加了onRenderTracked 和onRenderTriggered函数。
+
+## 6、父子传参不同
+
+**vue2**：父传子，用props,子传父用事件 Emitting Events。在vue2中，会**调用this$emit**然后传入事件名和对象。
+
+**vue3**：父传子，用props,子传父用事件 Emitting Events。在vue3中的setup()中的第二个参数content对象中就有emit，那么我们只要在setup()接收**第二个参数中使用分解对象法取出emit**就可以在setup方法中随意使用了。
+
+## 7、指令与插槽不同
+
+**vue2**：vue2中使用slot可以**直接使用slot**；v-for与v-if在vue2中优先级高的是**v-for指令**，而且不建议一起使用。
+
+**vue3**：vue3中必须使用**v-slot的形式**；vue3中v-for与v-if,只会把当前v-if当做v-for中的一个判断语句，**不会相互冲突**；vue3中移除keyCode作为v-on的修饰符，当然也不支持config.keyCodes；vue3中**移除v-on.native修饰符**；vue3中**移除过滤器filter**。
+
+## 8、main.js文件不同
+
+**vue2**：vue2中我们可以使用**pototype(原型)** 的形式去进行操作，引入的是**构造函数**。
+
+**vue3**：vue3中需要使用**结构**的形式进行操作，引入的是**工厂函数**；vue3中app组件中可以**没有根标签**。
 
