@@ -2245,6 +2245,31 @@ const post = {
 
 todo
 
+## Provide/Inject
+
+`provide/Inject`提供一种在组件之间共享此类值的方式，而不通过组件书的每个层级显式传递props.
+
+![image-20250522223255660](..\img\image-20250522223255660.png)
+
+```
+// 深层组件元素传递
+provide('key',value)
+// 注入属性
+const data = inject('key')
+
+```
+
+### Symbol
+
+一种基本数据类型，每个`Symbol()`返回的值是唯一的。解决重名问题。
+
+```
+import {InjectionKey,Ref} from 'vue'
+const langkey =Symbol() as InjectionKey<Ref<string>>
+```
+
+
+
 
 
 # Vue性能优化
