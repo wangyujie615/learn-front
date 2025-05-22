@@ -1,6 +1,7 @@
 //无限函数柯里化
 function Curry(fn) {
     return function curried(...args) {
+        // function.length代表形参的个数
         if (args.length >= fn.length) {
             //当前参数多于函数需要的参数时 执行fn
             return fn.apply(this, args)
