@@ -1,6 +1,6 @@
 # Git commit规范
 **git commit 规范**
-整体格式: <type>(<scope>):subject
+整体格式: type(scope):subject
 ```
 feat(<Git>):提交commit规范
 ```
