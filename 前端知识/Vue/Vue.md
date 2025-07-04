@@ -2245,6 +2245,22 @@ const post = {
 
 todo
 
+## 插槽
+
+```
+<button class="fancy-btn">
+  <slot></slot> <!-- 插槽出口 -->
+</button>
+```
+
+`<slot>` 元素是一个**插槽出口** (slot outlet)，标示了父元素提供的**插槽内容** (slot content) 将在哪里被渲染。
+
+![image-20250621192752605](..\img\image-20250621192752605.png)
+
+### 渲染作用域
+
+
+
 ## Provide/Inject
 
 `provide/Inject`提供一种在组件之间共享此类值的方式，而不通过组件书的每个层级显式传递props.
