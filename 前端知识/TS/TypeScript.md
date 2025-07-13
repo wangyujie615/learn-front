@@ -160,9 +160,10 @@ function axios(config:{url:string;method?:string}){
 
 //声明接口
 interface IPerson{
-  name:string
-  age:number
-  sayHi:()=>void
+  name?:string
+  age?:number
+  sayHi?:()=>void
+  [index: number]: string // 可索引的类型 Typescript 支持两种索引签名：字符串和数字。
 }
 //使用
 let person:IPerson = {
@@ -170,9 +171,17 @@ let person:IPerson = {
   age:19,
   sayHi(){},
 }
+// 只读属性
+interface Point{
+    readonly x: number;
+    readonly y: number;
+}
 ```
 
+Typescript 支持两种索引签名：**字符串和数字**。 可以同时使用两种类型的索引，但是数字索引的返回值必须是字符串索引返回值类型的子类型。 这是因为当使用`number`来索引时，JavaScript 会将它转换成`string`然后再去索引对象。 也就是说用`100`（一个`number`）去索引等同于使用`"100"`（一个`string`）去索引，因此两者需要保持一致。
+
 #### 接口与类型别名的对比
+
 相同点：为对象指定类型
 
 不同点：
@@ -209,12 +218,7 @@ interface Point3D extends Point2D{
 }
 ```
 
-继承属性同名会发生覆盖情况，后续属性会发生覆盖
-
-```
-```
-
-
+**继承属性同名会发生覆盖情况，后续属性会发生覆盖**
 
 ### 元组类型
 
@@ -320,7 +324,75 @@ let obj: any = { name: "wyj", age: 9 };
 console.log(obj.name);
 ```
 
+### unknown类型
+
+写应用的时候可能会需要描述一个我们还不知道其类型的变量。这些值可以来自动态内容，例如从用户获得，或者我们想在我们的 API 中接收所有可能类型的值。
+
+```
+let notSure: unknown = 4;
+notSure = "maybe a string instead";
+
+// OK, definitely a boolean
+notSure = false;
+```
+
+如果你有一个 `unknwon` 类型的变量，你可以通过进行 `typeof` 、比较或者更高级的类型检查来将其的类型范围缩小，这些方法会在后续章节中进一步讨论：
+
+```
+// @errors: 2322 2322 2322
+declare const maybe: unknown;
+// 'maybe' could be a string, object, boolean, undefined, or other types
+const aNumber: number = maybe;
+
+if (maybe === true) {
+  // TypeScript knows that maybe is a boolean now
+  const aBoolean: boolean = maybe;
+  // So, it cannot be a string
+  const aString: string = maybe;
+}
+
+if (typeof maybe === "string") {
+  // TypeScript knows that maybe is a string
+  const aString: string = maybe;
+  // So, it cannot be a boolean
+  const aBoolean: boolean = maybe;
+}
+```
+
+### any类型和unknown类型的区别
+
+| **特性**         | **`any`**                            | **`unknown`**                    |
+| ---------------- | ------------------------------------ | -------------------------------- |
+| **类型安全性**   | **无类型检查**，可能导致运行时错误   | **强制类型检查**，提高代码安全性 |
+| **赋值限制**     | 可赋值给任意类型                     | 只能赋值给 `unknown` 或 `any`    |
+| **被赋值**       | 可接收任意类型的值                   | 可接收任意类型的值               |
+| **操作限制**     | 可直接操作，无需类型检查             | 必须先进行类型检查或断言才能操作 |
+| **推荐使用场景** | 需完全绕过类型检查的情况（谨慎使用） | 处理未知类型数据，保证类型安全   |
+
+### never类型
+
+`never`类型表示的是那些永不存在的值的类型。`never`类型是任何类型的子类型，也可以赋值给任何类型；然而，_没有_类型是`never`的子类型或可以赋值给`never`类型（除了`never`本身之外）。 即使`any`也不可以赋值给`never`。
+
+```
+// 返回never的函数必须存在无法达到的终点
+function error(message: string): never {
+    throw new Error(message);
+}
+
+// 推断的返回值类型为never
+function fail() {
+    return error("Something failed");
+}
+
+// 返回never的函数必须存在无法达到的终点
+function infiniteLoop(): never {
+    while (true) {
+    }
+}
+```
+
 ### typeof操作符
+
 使用typeof在类型上下文检查。只能用来查询变量和属性的类型，不能用于查询函数的类型。
 
 ```typescript
