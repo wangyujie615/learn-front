@@ -20,7 +20,7 @@ const app = createApp(App)
 ```
 
 ### 挂载应用
-<font style="color:#000000;">应用实例必须在调用了 </font>`<font style="color:#000000;">.mount()</font>`<font style="color:#000000;"> 方法后才会渲染出来。该方法接收一个“容器”参数，</font>**<font style="color:#000000;">可以是一个实际的 DOM 元素或是一个 CSS 选择器字符串</font>**<font style="color:#000000;">：</font>
+<font style="color:#000000;">应用实例必须在调用了 </font>`.mount()`<font style="color:#000000;"> 方法后才会渲染出来。该方法接收一个“容器”参数，</font>**<font style="color:#000000;">可以是一个实际的 DOM 元素或是一个 CSS 选择器字符串</font>**<font style="color:#000000;">：</font>
 
 ```vue
 <div id="app"></div>
@@ -32,18 +32,18 @@ app.mount('#app')
 
 <font style="color:#000000;">应用根组件的内容将会被渲染在容器元素里面。容器元素自己将不会被视为应用的一部分。</font>
 
-`<font style="color:#000000;">.mount()</font>`<font style="color:#000000;"> 方法应该</font>**<font style="color:#000000;">始终在整个应用配置和资源注册完成后被调用</font>**<font style="color:#000000;">。同时请注意，不同于其他资源注册方法，它的返回值是根组件实例而非应用实例。</font>
+`.mount()`<font style="color:#000000;"> 方法应该</font>**<font style="color:#000000;">始终在整个应用配置和资源注册完成后被调用</font>**<font style="color:#000000;">。同时请注意，不同于其他资源注册方法，它的返回值是根组件实例而非应用实例。</font>
 
 #### <font style="color:#000000;">DOM 中的根组件模板</font>
 <font style="color:#000000;">根组件的模板通常是组件本身的一部分，但也可以直接通过在挂载容器内编写模板来单独提供：</font>
 
-```plain
+```vue
 <div id="app">
   <button @click="count++">{{ count }}</button>
 </div>
 ```
 
-```plain
+```vue
 import { createApp } from 'vue'
 
 const app = createApp({
@@ -83,7 +83,7 @@ app.component('TodoDeleteButton', TodoDeleteButton)
 
 <font style="color:#DF2A3F;">在底层机制中，</font>**<font style="color:#DF2A3F;">Vue 会将模板编译成高度优化的 JavaScript 代码</font>**<font style="color:#DF2A3F;">。结合响应式系统，当应用状态变更时，Vue 能够智能地推导出需要重新渲染的组件的最少数量，并应用最少的 DOM 操作。</font>
 
-## 模板编译原理
+## 模板编译原理(重点)
 
 Vue中的模板template无法被浏览器解析并渲染，因为这不属于浏览器的标准，不是正确的HTML语法，**所以需要将template转化成一个JavaScript函数，这样浏览器就可以执行这一个函数并渲染出对应的HTML元素，就可以让视图跑起来了，这一个转化的过程，就成为模板编译**。模板编译又分三个阶段，**解析parse，优化optimize，生成generate**，最终生成可执行函数render。
 
@@ -111,15 +111,13 @@ constast = parse(template.trim(), options)
 
 AST元素节点总共三种类型：type为1表示普通元素、2为表达式、3为纯文本
 
-
-
 **（2）对静态节点做优化**
 
 ```javascript
 optimize(ast,options)
 ```
 
-这个过程主要分析出哪些是静态节点，给其打一个标记，为后续更新渲染可以直接跳过静态节点做优化
+这个**过程主要分析出哪些是静态节点，给其打一个标记，为后续更新渲染可以直接跳过静态节点做优化**
 
 
 
@@ -146,13 +144,13 @@ generate将ast抽象语法树编译成 render字符串并将静态部分放到 s
 <font style="color:#000000;">双大括号会将数据解释为纯文本，而不是 HTML。若想插入 HTML，你需要使用 </font>[<font style="color:#000000;">v-html指令</font>](https://cn.vuejs.org/api/built-in-directives.html#v-html)<font style="color:#000000;">：</font>
 
 ```vue
-<p>Using text interpolation: {{ rawHtml }}</p>
-<p>Using v-html directive: <span v-html="rawHtml"></span></p>
+<p>Using text interpolation: {{ rawHtml }}</p> // 纯文本
+<p>Using v-html directive: <span v-html="rawHtml"></span></p> // 插入html
 ```
 
 <font style="color:#000000;">指令由 </font>`v-`<font style="color:#000000;"> 作为前缀，表明它们是一些由 Vue 提供的特殊 attribute，它们将为渲染的 DOM 应用特殊的响应式行为。</font>
 
-### Attribute绑定
+### 属性绑定
 <font style="color:#000000;">双大括号不能在 HTML attributes 中使用。想要响应式地绑定一个 attribute，应该使用 </font>[<font style="color:#000000;">v-bind指令</font>](https://cn.vuejs.org/api/built-in-directives.html#v-bind)<font style="color:#000000;">：</font>
 
 ```vue
@@ -169,7 +167,7 @@ generate将ast抽象语法树编译成 render字符串并将静态部分放到 s
 
 <font style="color:#000000;">开头为 </font>`:`<font style="color:#000000;"> 的 attribute 可能和一般的 HTML attribute 看起来不太一样，但它的确是合法的 attribute 名称字符，并且所有支持 Vue 的浏览器都能正确解析它。</font>
 
-#### 布尔型Attribute
+#### 布尔型属性
 [<font style="color:#000000;">布尔型 attribute</font>](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Attributes#%E5%B8%83%E5%B0%94%E5%80%BC%E5%B1%9E%E6%80%A7)<font style="color:#000000;"> 依据 true / false 值来决定 attribute 是否应该存在于该元素上。</font>[<font style="color:#000000;">disabled</font>](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled)<font style="color:#000000;"> 就是最常见的例子之一。</font>
 
 ```vue
@@ -188,26 +186,26 @@ const objectOfAttrs = {
 <div v-bind="objectOfAttrs"></div>
 ```
 
-### 指令Directives
-<font style="color:#000000;">指令是带有 </font>`v-`<font style="color:#000000;"> 前缀的特殊 attribute。Vue 提供了许多</font>[<font style="color:#000000;">内置指令</font>](https://cn.vuejs.org/api/built-in-directives.html)<font style="color:#000000;">，包括上面我们所介绍的 </font>`v-bind`<font style="color:#000000;"> 和 </font>`v-html`<font style="color:#000000;">。</font>
+### 指令(Vue特有的指令系统)
+<font style="color:#000000;">指令是带有 </font>`v-`<font style="color:#000000;"> 前缀的特殊属性。Vue 提供了许多</font>[<font style="color:#000000;">内置指令</font>](https://cn.vuejs.org/api/built-in-directives.html)<font style="color:#000000;">，包括上面我们所介绍的 </font>`v-bind`<font style="color:#000000;"> 和 </font>`v-html`<font style="color:#000000;">。</font>
 
-<font style="color:#000000;">指令 attribute 的期望值为一个 JavaScript 表达式 (除了少数几个例外，即之后要讨论到的 </font>`v-for`<font style="color:#000000;">、</font>`v-on`<font style="color:#000000;"> 和 </font>`v-slot`<font style="color:#000000;">)。</font>**<font style="color:#000000;">一个指令的任务是在其表达式的值变化时响应式地更新 DOM</font>**<font style="color:#000000;">。以 </font>[<font style="color:#000000;">v-if</font>](https://cn.vuejs.org/api/built-in-directives.html#v-if)<font style="color:#000000;"> 为例：</font>
+<font style="color:#000000;">指令 attribute 的**期望值为一个 JavaScript 表达式** (除了少数几个例外，即之后要讨论到的 </font>`v-for`<font style="color:#000000;">、</font>`v-on`<font style="color:#000000;"> 和 </font>`v-slot`<font style="color:#000000;">)。</font>**<font style="color:#000000;">一个指令的任务是在其表达式的值变化时响应式地更新 DOM</font>**<font style="color:#000000;">。以 </font>[<font style="color:#000000;">v-if</font>](https://cn.vuejs.org/api/built-in-directives.html#v-if)<font style="color:#000000;"> 为例：</font>
 
 ```vue
 <p v-if="seen">Now you see me</p>
 ```
 
-#### 参数Arguments
+#### 参数
 <font style="color:#000000;">某些指令会需要一个“参数”，在指令名后通过一个冒号隔开做标识。例如用 </font>`v-bind`<font style="color:#000000;"> 指令来响应式地更新一个 HTML attribute：</font>
 
-```plain
+```vue
 <a v-bind:href="url"> ... </a>
 
 <!-- 简写 -->
 <a :href="url"> ... </a>
 ```
 
-<font style="color:#000000;">这里 </font>`href`<font style="color:#000000;"> 就是一个参数，它告诉 </font>`v-bind`<font style="color:#000000;"> 指令将表达式 </font>`url`<font style="color:#000000;"> 的值绑定到元素的 </font>`href`<font style="color:#000000;"> attribute 上。在简写中，</font>**<font style="color:#000000;">参数前的一切 (例如 </font>**`v-bind:`**<font style="color:#000000;">) 都会被缩略为一个 </font>**`:`**<font style="color:#000000;"> 字符</font>**<font style="color:#000000;">。另一个例子是 </font>`v-on<`<font style="color:#000000;"> 指令，它将监听 DOM 事件：</font>
+<font style="color:#000000;">这里 </font>`href`<font style="color:#000000;"> 就是一个参数，它告诉 </font>`v-bind`<font style="color:#000000;"> 指令将表达式 </font>`url`<font style="color:#000000;"> 的值绑定到元素的 </font>`href`<font style="color:#000000;"> attribute 上。在简写中，</font>**<font style="color:#000000;">参数前的一切 (例如 </font>**`v-bind:`**<font style="color:#000000;">) 都会被缩略为一个 </font>**`:`**<font style="color:#000000;"> 字符</font>**<font style="color:#000000;">。另一个例子是 </font>`v-on`<font style="color:#000000;"> 指令，它将监听 DOM 事件：</font>
 
 ```vue
 <a v-on:click="doSomething"> ... </a>
@@ -256,7 +254,7 @@ const objectOfAttrs = {
 <a :['foo' + bar]="value"> ... </a>
 ```
 
-<font style="color:#000000;">如果你需要传入一个复杂的动态参数，我们推荐使用</font>[<font style="color:#000000;">计算属性</font>](https://cn.vuejs.org/guide/essentials/computed.html)<font style="color:#000000;">替换复杂的表达式，也是 Vue 最基础的概念之一，我们很快就会讲到。</font>
+**<font style="color:#000000;">注：如果需要传入一个复杂的动态参数，推荐使用</font>[<font style="color:#000000;">计算属性</font>](https://cn.vuejs.org/guide/essentials/computed.html)替换复杂的表达式**。
 
 <font style="color:#000000;">当使用 DOM 内嵌模板 (直接写在 HTML 文件里的模板) 时，我们需要避免在名称中使用大写字母，因为浏览器会强制将其转换为小写：</font>
 
@@ -264,9 +262,9 @@ const objectOfAttrs = {
 <a :[someAttr]="value"> ... </a>
 ```
 
-<font style="color:#000000;">上面的例子将会在 DOM 内嵌模板中被转换为 </font>`:[someattr]`<font style="color:#000000;">。如果你的组件拥有 “someAttr” 属性而非 “someattr”，这段代码将不会工作。单文件组件内的模板</font>**<font style="color:#000000;">不</font>**<font style="color:#000000;">受此限制。</font>
+上面的例子将会在 DOM 内嵌模板中被转换为`:[someattr]`。如果你的组件拥有 `someAttr`属性而非 `someattr`，这段代码将不会工作。单文件组件内的模板不受此限制。
 
-### <font style="color:#000000;">修饰符 Modifiers</font>
+### <font style="color:#000000;">修饰符</font>
 **<font style="color:#000000;">修饰符是以点开头的特殊后缀，表明指令需要以一些特殊的方式被绑定</font>**<font style="color:#000000;">。例如 </font>`.prevent`<font style="color:#000000;"> 修饰符会告知 </font>`v-on`<font style="color:#000000;"> 指令对触发的事件调用 </font>`event.preventDefault()`<font style="color:#000000;">：</font>
 
 ```plain
@@ -279,19 +277,36 @@ const objectOfAttrs = {
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1747316080047-1d1abd0d-c6d7-499f-9618-067a03fddd58.png)
 
+## 模板语法与JSX的区别(重点)
+
+前端描述UI的两种方案：
+
+- 模板语言
+- JSX
+
+区别：
+
+- JSX：JSX的角度是利用JS代码去描述UI,本质上是一种ES的语法糖。
+  - 特点：十分灵活，JSX本质上来说都会编译成一个JS对象，JSX在编写的过程中可以当作为一个对象变量
+
 ## 响应式基础
 
 ### data是一个函数的原因
 
 Vue组件可能存在多个实例，如果使用**对象形式定义data，则会导致它们共用一个data对象，那么状态变更将会影响所有组件实例，这是不合理的**；**采用函数形式定义，在initData时会将其作为工厂函数返回全新data对象，有效规避多实例之间状态污染问题**。而在Vue根实例创建过程中则不存在该限制，也是因为根实例只能有一个，不需要担心这种情况。
 
-### 响应式的原理
-
 当一个Vue实例创建时，Vue会遍历data中的属性，**用 Object.defineProperty（vue3.0使用proxy ）将它们转为 getter/setter，并且在内部追踪相关依赖，在属性被访问和修改时通知变化**。 **每个组件实例都有相应的 watcher 程序实例**，它会在组件渲染的过程中把属性记录为依赖，之后当依赖项的setter被调用时，会通知watcher重新计算，从而致使它关联的组件得以更新。
 
 ![img](https://cdn.nlark.com/yuque/0/2021/png/1500604/1620128979608-f7465ffc-9411-43e3-a6bc-96ab44dd77df.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_23%2Ctext_5b6u5L-h5YWs5LyX5Y-377ya5YmN56uv5YWF55S15a6d%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
 
+## 实现逻辑
+
+1. 数据劫持：拦截数据的读取与写入
+2. 依赖收集
+3. 
+
 ### ref()
+
 <font style="color:#000000;">在</font>**<font style="color:#000000;">组合式 API</font>**<font style="color:#000000;"> 中，推荐使用 </font>[<font style="color:#000000;">ref()</font>](https://cn.vuejs.org/api/reactivity-core.html#ref)<font style="color:#000000;"> 函数来声明响应式状态：</font>
 
 ```vue
@@ -1985,7 +2000,7 @@ emit('enlarge-text')
 </script>
 ```
 
-### 通过插槽来分配内容
+### 通过插槽来分配内容(重要)
 <font style="color:rgb(33, 53, 71);">一些情况下我们会希望能和 HTML 元素一样向组件中传递内容：</font>
 
 ```vue
@@ -2013,6 +2028,37 @@ emit('enlarge-text')
 ```
 
 <font style="color:rgb(33, 53, 71);">使用 </font>`<slot>`<font style="color:rgb(33, 53, 71);"> 作为一个占位符，父组件传递进来的内容就会渲染在这里。</font>
+
+```
+深入理解插槽
+<div>
+	<!-- 默认插槽 -->
+	<slot></slot>
+	<!-- 具名插槽 -->
+	<slot name="slot1"></slot>
+	<!-- 作用域插槽 -->
+	<slot name="slot2" msg="hello world"></slot>
+</div>
+
+<Comp>
+	<p>默认插槽</p>
+	<template #slot1>
+		<p>具名插槽</p>
+	</template>
+	<template #slot2="{msg}">
+		<p>{{msg}}</p>
+	</template>
+</Comp>
+
+类似于
+{
+	default: function(){},
+	slot1: function(){}，
+	slot
+}
+```
+
+
 
 ### <font style="color:rgb(33, 53, 71);">动态组件</font>
 <font style="color:rgb(33, 53, 71);">上面的例子是通过 Vue 的 </font>`<component>`<font style="color:rgb(33, 53, 71);"> 元素和特殊的 </font>`is`<font style="color:rgb(33, 53, 71);"> attribute 实现的：</font>
@@ -2255,17 +2301,61 @@ todo
 
 `<slot>` 元素是一个**插槽出口** (slot outlet)，标示了父元素提供的**插槽内容** (slot content) 将在哪里被渲染。
 
-![image-20250621192752605](..\img\image-20250621192752605.png)
+![image-20250621192752605](../img/image-20250621192752605.png)
+
+插槽的分类：
+
+- 默认插槽
+- 具名插槽
+- 作用域插槽
+
+```
+<template>
+  <!-- 默认插槽 -->
+  <slot></slot>
+  <!-- 具名插槽 -->
+  <slot name="slot1"></slot>
+  <!-- 作用域插槽 -->
+  <slot name="slot2" msg="hello"></slot>
+</template>
+插槽本质还是一个对象
+{
+	default:function(){} //默认插槽
+	slot1:function(){} //具名插槽
+	slot2: function(msg){} //作用域插槽 
+}
+```
+
+## v-slot
+
+用于声明具名插槽或是期望接收 props 的作用域插槽。
+
+```
+<!-- 具名插槽 -->
+<BaseLayout>
+  <template v-slot:header>
+    Header content
+  </template>
+
+  <template v-slot:default>
+    Default slot content
+  </template>
+
+  <template v-slot:footer>
+    Footer content
+  </template>
+</BaseLayout>
+```
+
+
 
 ### 渲染作用域
-
-
 
 ## Provide/Inject
 
 `provide/Inject`提供一种在组件之间共享此类值的方式，而不通过组件书的每个层级显式传递props.
 
-![image-20250522223255660](..\img\image-20250522223255660.png)
+![image-20250522223255660](../img/image-20250522223255660.png)
 
 ```
 // 深层组件元素传递
