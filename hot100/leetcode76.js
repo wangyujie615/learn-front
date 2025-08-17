@@ -1,35 +1,18 @@
-//最小覆盖子串
 /**
- * 最小覆盖子串
- * @param {*} s 
- * @param {*} t 
+ * @param {number[]} nums
+ * @return {number}
  */
-var minWindow = function (s, t) {
-    if (!s || !t || s.length < t.length) {
-        return '';
+var maxSubArray = function(nums) {
+    // 前缀和 + map
+    // Max(pre[j]-pre[i]) pre[j]最大 pre[i]最小
+    // 贪心
+    const len = nums.length
+    let sum = 9
+    let min = Infinity,max = -Infinity
+    for(let i = 0;i<len;i++){
+        sum+nums[i]
+        max = Math.max(max,sum)
+        min = Math.min(min,sum)
     }
-    //动态滑窗
-    const map = new Map()
-    for (const c of t) {
-        map.set(c, (map.get(c) ?? 0) + 1)
-    }
-    const n = s.length
-    let start = 0, end = n, res = n+1, left = 0;
-    for (let i = 0; i < n; i++) {
-        if (map.has(s[i])) {
-            map.set(s[i], map.get(s[i]) - 1)
-        }
-        while ([...map.values()].every(value => value <= 0)) {
-            if (map.has(s[left])) {
-                map.set(s[left], map.get(s[left]) + 1)
-            }
-            if (res > i - left + 1) {
-                res = i - left + 1
-                start = left
-                end = i
-            }
-            left++
-        }
-    }
-    return res > s.length ? "" : s.substring(start, end + 1);
-}
+    return max===min?min:max-min
+};

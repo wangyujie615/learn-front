@@ -27,7 +27,7 @@ var maxSlidingWindow = function (nums, k) {
     //使用单调队列:要保证队列的单调性不变
     //队列有序
     const res = []
-    const que = []
+    const que = [] // 存放的是索引
     const n = nums.length
     for (let i = 0; i < n; i++) {
         //这一步就是保证队列的单调性
@@ -36,10 +36,12 @@ var maxSlidingWindow = function (nums, k) {
             que.shift()
         }
         que.unshift(i)
+        // 与最大的节点的距离大于k 
         if (i - que[que.length-1] >= k) {
             //最大元素与当前元素距离超过窗口大小 则弹出
             que.pop()
         }
+        // 得到最大值
         if (i >= k - 1) {
             res.push(nums[que[que.length-1]])
         }
