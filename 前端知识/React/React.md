@@ -14,7 +14,46 @@ Vue3：将前端页面描述为模板
 2. AOT(预编译，将框架编译成可以理解的JS代码)
 3. 虚拟DOM
 
-### 如何实现响应式更新
+### React架构
+
+1. Scheduler(调度器)：调度任务的优先级
+
+2. Reconciler(协调器)：VDOM的实现，负责根据变量的变化计算出UI的变化
+
+3. Render(渲染器)：负责将UI变化渲染到宿主环境中去
+
+**注:** React 16相比之前有一个很大的不同，React16之前的VDOM渲染是通过DFS进行渲染，且渲染的过程无法中断；React 16以后的VDOM的渲染有了很大的优化，VDOM渲染可中断且每个渲染任务都设置了一个过期时间，将整个过程拆分成多个宏任务；其次，16增加了调度器对任务的优先级进行调度
+
+### Fiber架构
+
+fiberNode:
+
+1. 保存着更新相关的信息
+2. 保存优先级调度的信息
+
+工作原理：双缓存技术；Fiber架构中同时存在Fiber Tree，一棵是真实UI对应的Fiber Tree(前缓冲区)，另一棵是正在内存中构建的Fiber Tr
+
+```javascript
+//fiber节点中的相关数据
+{
+...
+this.tag = tag; // 对应组件的类型
+this.key = key; // key属性
+this.type = null; //
+this.stateNode = null; //FiberNode对应的元素
+this.return = null; //指向父级节点
+this.child = null; //指向第一个子节点
+this.sibling =null;//指向右边的兄弟节点
+}
+```
+
+#### Fiber Tree的构建过程
+
+1. rootNode: 负责管理应用的全局事宜
+
+  - 新Tree与旧Tree的切换
+  - 存储任务的过期时间
+  - 存储任务的调度信息
 
 
 
@@ -213,8 +252,8 @@ const list = [
 function App() {
   return (
     <div className="App">
-      {/*  实现列表渲染  */}
-      {/* 核心方法：map方法啊 */}
+      {/* 实现列表渲染 */}
+      {/* 核心方法：map方法 */}
       {/* key的作用：加速React的渲染速度，加上一个独一无二的key值，必须是Number或者字符串 */}
       <ul>
         {list.map(item => <li key={item.id}>{item.name}</li>)}
@@ -906,6 +945,11 @@ function Father() {
 
 #### render阶段
 
+1. beginWork(递): 创建下一级fiberNode，标记相应的操作的标记，将每个fiber划分为一个可以分割的单位，创建的过程中判断过期没，若过期下一次执行从中断处开始执行。
+2. completeWork(归): 如存在兄弟节点，继续传递；反之，向上回归；标记更新操作的标记，向上进行flags冒泡
+
+根据`mount`和`update`流程不同
+
 ##### `React.render()`方法的原理
 
 首先，`render`函数在`react`中有两种形式：
@@ -960,9 +1004,10 @@ function Father() {
 - **尽量不要用数组的index去作为key；**
 - 不要在render的时候用随机数或者其他操作给元素加上不稳定的key，这样造成的性能开销比不加key的情况下更糟糕。
 
-##### `fiber`节点(重点)
+### commit阶段
 
-todo
+render阶段流程可以被打断，commit阶段一开始就会通过执行到完成、整个阶段可以分为三个阶段：
+
 
 ## 事件机制(合成事件)
 
@@ -1474,7 +1519,7 @@ Redux定义了三个内容：
 
 #### 术语
 ##### Action
-**<font style="color:rgb(28, 30, 33);">action</font>**<font style="color:rgb(28, 30, 33);"> 是一个具有 </font>`<font style="color:rgb(28, 30, 33);">type</font>`<font style="color:rgb(28, 30, 33);"> 字段的普通 JavaScript 对象。</font>**<font style="color:rgb(28, 30, 33);">你可以将 action 视为描述应用程序中发生了什么的事件</font>**<font style="color:rgb(28, 30, 33);">.</font>`<font style="color:rgb(28, 30, 33);">type</font>`<font style="color:rgb(28, 30, 33);"> 字段是一个字符串，给这个 action 一个描述性的名字，比如</font>`<font style="color:rgb(28, 30, 33);">"todos/todoAdded"</font>`<font style="color:rgb(28, 30, 33);">。action 对象可以有其他字段，其中包含有关发生的事情的附加信息。按照惯例，我们将该信息放在名为 </font>`<font style="color:rgb(28, 30, 33);">payload</font>`<font style="color:rgb(28, 30, 33);"> 的字段中。</font>
+**<font style="color:rgb(28, 30, 33);">action</font>**<font style="color:rgb(28, 30, 33);"> 是一个具有 </font>`type`<font style="color:rgb(28, 30, 33);"> 字段的普通 JavaScript 对象。</font>**<font style="color:rgb(28, 30, 33);">你可以将 action 视为描述应用程序中发生了什么的事件</font>**<font style="color:rgb(28, 30, 33);">.</font>`type`<font style="color:rgb(28, 30, 33);"> 字段是一个字符串，给这个 action 一个描述性的名字，比如</font>`todos/todoAdded`<font style="color:rgb(28, 30, 33);">。action 对象可以有其他字段，其中包含有关发生的事情的附加信息。按照惯例，我们将该信息放在名为 </font>`payload`<font style="color:rgb(28, 30, 33);"> 的字段中。</font>
 
 ```javascript
 const addTodoAction = {
@@ -1496,16 +1541,14 @@ const addTodo = text=>{
 ```
 
 ##### Reducer
-**<font style="color:rgb(28, 30, 33);">reducer</font>**<font style="color:rgb(28, 30, 33);"> 是一个函数，接收当前的 </font>`<font style="color:rgb(28, 30, 33);">state</font>`<font style="color:rgb(28, 30, 33);"> 和一个 </font>`<font style="color:rgb(28, 30, 33);">action</font>`<font style="color:rgb(28, 30, 33);"> 对象，必要时决定如何更新状态，并返回新状态。函数签名是：</font>`<font style="color:rgb(28, 30, 33);">(state, action) => newState</font>`<font style="color:rgb(28, 30, 33);">。 </font>**<font style="color:rgb(28, 30, 33);">你可以将 reducer </font>****<font style="color:#ECAA04;">视为一个事件监听器</font>****<font style="color:rgb(28, 30, 33);">，它根据接收到的 action（事件）类型处理事件。</font>**
+**<font style="color:rgb(28, 30, 33);">reducer</font>**<font style="color:rgb(28, 30, 33);"> 是一个函数，接收当前的 </font>`state`<font style="color:rgb(28, 30, 33);"> 和一个 </font>`action`<font style="color:rgb(28, 30, 33);"> 对象，必要时决定如何更新状态，并返回新状态。函数签名是：</font>`(state, action) => newState`<font style="color:rgb(28, 30, 33);">。 </font>**<font style="color:rgb(28, 30, 33);">你可以将 reducer </font>**<font style="color:#ECAA04;">视为一个事件监听器</font><font style="color:rgb(28, 30, 33);">，它根据接收到的 action（事件）类型处理事件。</font>
 
-:::success
+
 <font style="color:rgb(28, 30, 33);">Reducer必需符合以下规则：</font>
 
 + <font style="color:rgb(28, 30, 33);">仅使用</font>`<font style="color:rgb(28, 30, 33);">state</font>`<font style="color:rgb(28, 30, 33);"> 和</font>`<font style="color:rgb(28, 30, 33);">action</font>`<font style="color:rgb(28, 30, 33);">参数计算新的状态值</font>
 + **<font style="color:#74B602;">禁止直接修改</font>**`**<font style="color:#74B602;">state</font>**`<font style="color:rgb(28, 30, 33);">。必须通过复制现有的</font>`<font style="color:rgb(28, 30, 33);">state</font>`<font style="color:rgb(28, 30, 33);">并对复制的值进行更改的方式来做 </font>_<font style="color:rgb(28, 30, 33);">不可变更新（immutable updates）</font>_<font style="color:rgb(28, 30, 33);">。</font>
 + **<font style="color:#ECAA04;">禁止任何异步逻辑、依赖随机值或导致其他“副作用”的代码</font>**
-
-:::
 
 ```javascript
 const inintailState = {value:0}
@@ -1590,12 +1633,10 @@ export default configureStore({
 + <font style="color:rgb(28, 30, 33);">通过</font>[<font style="color:rgb(28, 30, 33);">store.getState()</font>](https://cn.redux.js.org/api/store#getState)<font style="color:rgb(28, 30, 33);"> 访问当前 state;</font>
 + <font style="color:rgb(28, 30, 33);">通过</font>[<font style="color:rgb(28, 30, 33);">store.dispatch(action)</font>](https://cn.redux.js.org/api/store#dispatch)<font style="color:rgb(28, 30, 33);"> 更新状态;</font>
 + <font style="color:rgb(28, 30, 33);">通过</font>[<font style="color:rgb(28, 30, 33);">store.subscribe(listener)</font>](https://cn.redux.js.org/api/store#subscribe)<font style="color:rgb(28, 30, 33);"> 注册监听器回调;</font>
-+ <font style="color:rgb(28, 30, 33);">通过</font>[<font style="color:rgb(28, 30, 33);">store.subscribe(listener)</font>](https://cn.redux.js.org/api/store#subscribe)<font style="color:rgb(28, 30, 33);"> 返回的 </font>`<font style="color:rgb(28, 30, 33);">unsubscribe</font>`<font style="color:rgb(28, 30, 33);"> 函数注销监听器。</font>
-
-:::
++ <font style="color:rgb(28, 30, 33);">通过</font>[<font style="color:rgb(28, 30, 33);">store.subscribe(listener)</font>](https://cn.redux.js.org/api/store#subscribe)<font style="color:rgb(28, 30, 33);"> 返回的 </font>`unsubscribe`<font style="color:rgb(28, 30, 33);"> 函数注销监听器。</font>
 
 ##### <font style="color:rgb(28, 30, 33);">Redux Slice</font>
-**<font style="color:rgb(28, 30, 33);">“slice"是应用中</font>****<font style="color:#ECAA04;">单个功能的Redux reducer逻辑和action的集合</font>**<font style="color:rgb(28, 30, 33);">, 通常一起定义在一个文件中。</font>
+**<font style="color:rgb(28, 30, 33);">“slice"是应用中</font>**<font style="color:#ECAA04;">单个功能的Redux reducer逻辑和action的集合</font><font style="color:rgb(28, 30, 33);">, 通常一起定义在一个文件中。</font>
 
 ```javascript
 import { configureStore } from '@reduxjs/toolkit'
@@ -1644,7 +1685,7 @@ export const { increment, decrement, incrementByAmount } = counterSlice.actions
 export default counterSlice.reducer
 ```
 
-<font style="color:rgb(28, 30, 33);">Redux Toolkit有一个名为</font>`<font style="color:rgb(28, 30, 33);">createSlice</font>`<font style="color:rgb(28, 30, 33);">的函数，它负责生成action类型字符串、action creator函数和 action对象的工作。你所要做的就是为这个slice定义一个名称，编写一个包含reducer函数的对象，它会自动生成相应的action代码。</font>
+<font style="color:rgb(28, 30, 33);">Redux Toolkit有一个名为</font>`createSlice`<font style="color:rgb(28, 30, 33);">的函数，它负责生成action类型字符串、action creator函数和 action对象的工作。你所要做的就是为这个slice定义一个名称，编写一个包含reducer函数的对象，它会自动生成相应的action代码。</font>
 
 ##### <font style="color:rgb(28, 30, 33);">用Thunk编写异步逻辑</font>
 **<font style="color:rgb(28, 30, 33);">thunk</font>**<font style="color:rgb(28, 30, 33);">是一种特定类型的Redux函数，可以包含异步逻辑。Thunk是使用两个函数编写的：</font>
@@ -1684,7 +1725,7 @@ const fetchUserById = userId => {
 ```
 
 #### Providing the Store
-<font style="color:rgb(28, 30, 33);">需要使用一个名为 </font>`<font style="color:rgb(28, 30, 33);"><Provider></font>`<font style="color:rgb(28, 30, 33);"> 的组件在幕后传递 Redux store，以便他们可以访问它。</font>
+<font style="color:rgb(28, 30, 33);">需要使用一个名为 </font>`<Provider>`<font style="color:rgb(28, 30, 33);"> 的组件在幕后传递 Redux store，以便他们可以访问它。</font>
 
 ```javascript
 import React from 'react'
@@ -1712,9 +1753,17 @@ ReactDOM.render(
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/43189118/1736857663431-9caff5a2-3c9b-42f6-969d-cb3c041fa8c0.png)
 
+### Redux与Zustand的区别
 
+|                  | **Redux**                                                    | **Zustand**                                       |
+| ---------------- | ------------------------------------------------------------ | ------------------------------------------------- |
+| **核心模型**     | 单一 store + reducer（纯函数） + action                      | 直接通过函数定义 store（无强制 action / reducer） |
+| **状态更新方式** | 必须通过 `dispatch(action)`，由 reducer 返回新 state         | 直接调用 `set()` 修改 state                       |
+| **约束**         | 强约束（state 只读、action 必须有 type、reducer 必须纯函数） | 几乎无约束（随意修改 state，只要调用 set）        |
+| **理念**         | 可预测的状态容器（严格状态流）                               | 简洁 & 灵活，hook 化的状态容器                    |
 
 ## React.Router
+
 前端路由：一个路径path对应一个组件component，当我们在浏览器中访问一个path的时候，path对应的组件会在页面中进行渲染。
 
 ### 开发中的路由配置
