@@ -180,14 +180,13 @@ interface Point{
 
 Typescript 支持两种索引签名：**字符串和数字**。 可以同时使用两种类型的索引，但是数字索引的返回值必须是字符串索引返回值类型的子类型。 这是因为当使用`number`来索引时，JavaScript 会将它转换成`string`然后再去索引对象。 也就是说用`100`（一个`number`）去索引等同于使用`"100"`（一个`string`）去索引，因此两者需要保持一致。
 
-#### 接口与类型别名的对比
+#### 接口与类型别名的对比(重点)
 
-相同点：为对象指定类型
-
-不同点：
-
-+ 接口：只能为对象指定类型
-+ 类型别名：可以为任意类型指定别名
+||类型别名|接口|
+|:-:|:-:|:-:|
+|**扩展性**|类型别名可扩展性弱，可以通过`&`来进行扩展|接口可扩展性强，利用`extends`来进行扩展|
+|**是否可以重复声明**|否|可以，重复声明可以自动合并|
+|**表示的范围**|任何类型|只能描述对象的结构（对象、函数、类）|
 
 ```typescript
 //类型别名
@@ -740,8 +739,29 @@ const myNum = new GenericNumber(100); //构造函数会 自动推断
 myNum.add(10,10)
 ```
 
-#### 泛型工具类型
+#### 泛型工具类型(重点)
+
+|工具类型|作用|备注|
+|:-:|:-:|:-:|
+|`Omit<T,K>`|用来 **从一个已有类型中剔除某些属性**，并返回一个新的类型。从属性`T`剔除`K`||
 ```typescript
+// Omit<T,K> = Pick<T, Exclude<keyof T, K>>;
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+}
+
+type SafeUser = Omit<User, "password">;
+
+const u: SafeUser = {
+  id: 1,
+  name: "Jack",
+  email: "jack@example.com",
+  // password: "xxx" ❌ 会报错
+};
+
 //1.Partial<Type>：用于构造一个类型，将Type的所有属性设置为可选
 interface Props{
     id:string
@@ -877,7 +897,14 @@ TS中有两种文件类型：1. .ts文件 2. .d.ts文件
     1. 在JS项目迁移到TS项目时，为了让已有的.js文件由类型声明
     2. 称为库作者，创建库给其他人使用
 
+## 生成器函数
+
+`yield`： **生成器函数（Generator Function）** 内使用的关键字，用来 **暂停函数执行并返回一个值**，后续可以通过调用 `next()` 方法恢复执行。
+
+
+
 ## 在React中使用TS
+
 react-app-env.d.ts：React项目默认的类型声明文件
 
 **三斜线指令**：指定依赖的其他类型声明文件，types表示依赖的类型声明文件包的名称。

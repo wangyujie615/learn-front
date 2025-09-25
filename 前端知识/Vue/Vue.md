@@ -289,7 +289,19 @@ const objectOfAttrs = {
 - JSX：JSX的角度是利用JS代码去描述UI,本质上是一种ES的语法糖。
   - 特点：十分灵活，JSX本质上来说都会编译成一个JS对象，JSX在编写的过程中可以当作为一个对象变量
 
-## 响应式基础
+## 组合式API vs. Options API
+
+Options API的优缺点:
+
+- 优点：简单清晰，适合小组件
+- 缺点：逻辑打散、不适合大型组件/逻辑复用；功能被拆分。
+
+Composition API的优缺点：
+
+- 优点：逻辑集中，类型堆到优秀，更容易抽离为组合式函数。(逻辑的聚合性更好，抽象能力更好)
+- setup()：主函数本身，语法糖；设计思路类似与react hook思路
+
+## 响应式基础(重要)
 
 ### data是一个函数的原因
 
@@ -438,7 +450,7 @@ const state = reactive({ count: 0 })
 
 <font style="color:rgb(33, 53, 71);">响应式对象是 </font>[<font style="color:rgb(66, 184, 131);">JavaScript 代理</font>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)<font style="color:rgb(33, 53, 71);">，其行为就和普通对象一样。不同的是，Vue 能够拦截对响应式对象所有属性的访问和修改，以便进行依赖追踪和触发更新。</font>
 
-`reactive()`<font style="color:rgb(33, 53, 71);"> 将深层地转换对象：当访问嵌套对象时，它们也会被 </font>`reactive()`<font style="color:rgb(33, 53, 71);"> 包装。当 ref 的值是一个对象时，</font>`ref()`<font style="color:rgb(33, 53, 71);"> 也会在内部调用它。与浅层 ref 类似，这里也有一个 </font>[<font style="color:rgb(66, 184, 131);">shallowReactive()</font>](https://cn.vuejs.org/api/reactivity-advanced.html#shallowreactive)<font style="color:rgb(33, 53, 71);"> API 可以选择退出深层响应性。</font>
+`reactive()`<font style="color:rgb(33, 53, 71);"> 将**深层地转换对象**：当访问嵌套对象时，它们也会被 </font>`reactive()`<font style="color:rgb(33, 53, 71);"> 包装。当 ref 的值是一个对象时，</font>`ref()`<font style="color:rgb(33, 53, 71);"> 也会在内部调用它。与浅层 ref 类似，这里也有一个 </font>[<font style="color:rgb(66, 184, 131);">shallowReactive()</font>](https://cn.vuejs.org/api/reactivity-advanced.html#shallowreactive)<font style="color:rgb(33, 53, 71);"> API 可以选择退出深层响应性。</font>
 
 #### <font style="color:rgb(33, 53, 71);">Proxy vs Original</font>
 ```javascript
@@ -447,6 +459,36 @@ const proxy = reactive(raw)
 
 // 代理对象和原始对象不是全等的
 console.log(proxy === raw) // false
+const state = { count: 0 }
+const p = new Proxy(state,{
+    // 拦截器 读
+    get(t,k){
+        console.log('get:',k)
+        return t[k]
+    },
+    // 写
+    set(t,k,v){
+        console.log('set:',k,v)
+        t[k] = v
+        return true
+    }
+})
+
+// defineProperty 循环遍历属性：增，删属性无法感知，只能拦截属性
+Object.deineProperty(
+    state,
+    'count',
+    {
+        get(){
+            console.log('get:count')
+            return value
+        },
+        set(v){
+            console.log('set:count',v)
+            value = v
+        }
+    }
+)
 ```
 
 **<font style="color:rgb(33, 53, 71);">只有代理对象是响应式的，更改原始对象不会触发更新</font>**<font style="color:rgb(33, 53, 71);">。因此，使用 Vue 的响应式系统的最佳实践是</font>**<font style="color:rgb(33, 53, 71);">仅使用你声明对象的代理版本</font>**<font style="color:rgb(33, 53, 71);">。</font>
@@ -554,9 +596,7 @@ methodsToPatch.forEach(function(method) {
 
 简单来说就是，**重写了数组中的那些原生方法，首先获取到这个数组的Observer对象，如果有新的值，就调用observeArray继续对新的值观察变化（也就是通过`target__proto__ == arrayMethods`来改变了数组实例的型），然后手动调用notify，通知渲染watcher，执行update。**
 
-## <font style="color:rgb(33, 53, 71);">
-
-## 计算属性</font>
+## 计算属性
 
 ```javascript
 <script setup>
@@ -688,6 +728,85 @@ const alwaysSmall = computed({
 
 - computed 计算属性 : 依赖其它属性值，并且 computed 的值有缓存，只有它依赖的属性值发生改变，下一次获取 computed 的值时才会重新计算 computed 的值。 
 - watch 侦听器 : 更多的是**观察**的作用，**无缓存性**，类似于某些数据的监听回调，每当监听的数据变化时都会执行回调进行后续操作。 
+
+### 响应式陷阱
+
+1. 解构失败：reactive结构会丢失响应性
+
+- 解决方案：toRefs(Object), Object.attribute 修改方式
+
+2. 动态添加属性：Vue2 不会属性更新, Vue 3属性更新
+3. 整体替换一个ref对象，会触发Vue重新追踪响应式依赖，如果其他地方引用了旧的state.value, 就会出现断联(建议直接修改对象属性或Object.assign)
+4. 通过索引修改数组元素；Vue 3可行，Vue 2不行，建议使用splice，兼容性，语义化。
+5. ref和reative混用，会导致语义不清
+
+## 依赖追踪机制
+
+1. 数据劫持：监听数据的变化
+2. 副作用函数(effect)：会读取数据，并在数据变化式重新执行的函数
+
+- 收集依赖(track)：当effect读取某个属性式，把它登记到属性的依赖集合中去
+
+  - 目的：建立响应式数据与副作用函数的映射关系
+  - 关键点：只有在有**activeEffect**的情况下，才会把依赖收集起来
+
+- 派发更新(trigger)：当属性变化式，从依赖集合里找到所有相关的effect，一次重新执行更新
+
+  - 目的：让用过这个数据的地方重新运行，从而更新视图或执行其他逻辑
+  - 关键点：精准触发，只更行真正受影响的副作用
+
+  ```javascript
+  let activeEffect = null
+  const bucket = new WeakMap() //存储依赖关系 target -> map -> (key,value) :'count': [effects]
+  
+  functio effect(fn){
+  	activeEffect = fn // 标活
+  	fn() // 触发track
+  	ativeEffect = null
+  }
+  const state = new Proxy({count:0},{
+  	get(t,k){
+  		if(activeEffect){
+  			// ======== track =========
+  			let depsMap = bucket.get(t)
+  			if(!depsMap) bucketMap.set(t,(depsMap = new Map()))
+  			let deps = desMap.get(k)
+  			if(!deps) depsMap.set(k,(deps = new Set()))
+  			deps.add(activeEffect)
+  		}
+  		return t[k]
+  	},
+      set(t,k,v){
+          t[k] = v
+          // ========== trigger ============
+          const depsMap = bucket.get(t)
+          if(!depsMap) return
+          const effects = depsMap.get(k)
+          effects && effects.forEach(fn=>fn())
+          return true
+      }
+  })
+  
+  ```
+
+## Vue响应式更新 VS React的状态更新
+Vue---细粒度更新，隐式触发
+1. 数据源：ref/reactive
+2. 依赖收集：getter
+3. 触发更新：setter
+4. 调度器：合并更新、去重更新
+5. 微任务批处理：在下一个tick异步更新组件(nextTick()的执行时机,DOM更新后执行一些操作)
+6. 执行patch：对比新旧虚拟DOM->最小化DOM改动
+
+React---自顶向下更新，显示触发
+1. 数据源：state
+2. 显示调用：setState
+3. 调度器：(事件/异步边界统一自动批处理)
+	[flushSync] <-(强制立刻执行 render+commit)
+4. Render阶段：自顶向下构建新树
+5. Commit阶段：Diff并写入DOM
+- 更新的时机
+- 批处理的时机
 
 ## 类与样式的绑定
 
