@@ -1,4 +1,7 @@
-// 递归
+/**
+ * Flatten:数组扁平化
+ */
+// 方式1：DFS
 function FlattenDfs(data){
     let res = []
     for(let i = 0; i < data.length; i++){
@@ -11,13 +14,13 @@ function FlattenDfs(data){
     return res
 }
 
-// reduce
+// 方式2： reduce+concat
 function FlattenReduce(data){
     return data.reduce((pre, cur) => {
         return pre.concat(Array.isArray(cur) ? FlattenReduce(cur) : cur)
     }, [])
 }
-// 迭代
+// 方式3：迭代
 function FlattenIter(data){
     let res = []
     let stack = [...data]
