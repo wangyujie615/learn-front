@@ -19,6 +19,7 @@ function MyPromiseAll(promiseArr) {
         promiseArr.forEach((promise, index) => {
             Promise.resolve(promise)
                 .then((result) => {
+                    //当一个promise执行完毕后进行统计结果
                     results[index] = result
                     competedCount++
                     if (competedCount === promiseCount) {
