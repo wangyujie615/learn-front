@@ -22,7 +22,17 @@ Vue3：将前端页面描述为模板
 
 3. Render(渲染器)：负责将UI变化渲染到宿主环境中去
 
-**注:** React 16相比之前有一个很大的不同，React16之前的VDOM渲染是通过DFS进行渲染，且渲染的过程无法中断；React 16以后的VDOM的渲染有了很大的优化，VDOM渲染可中断且每个渲染任务都设置了一个过期时间，将整个过程拆分成多个宏任务；其次，16增加了调度器对任务的优先级进行调度
+**注:** React 16相比之前有一个很大的不同，React16之前的VDOM渲染是通过DFS进行渲染，且渲染的过程无法中断；React 16以后的VDOM的渲染有了很大的优化，**VDOM渲染可中断且每个渲染任务都设置了一个过期时间，将整个过程拆分成多个宏任务；其次，16增加了调度器对任务的优先级进行调度**
+
+React 16的渲染流程：
+注意：中断一般发生在Reconciler中的render阶段，commit阶段是无法中断的
+- 整个渲染任务被划分为时间切片进行渲染，当超过固定之间片会通过`MessageChannel`将未完成的任务以宏任务的形式发放给浏览器，被动地让浏览器自行安排执行时间。
+- 整个渲染任务也分为优先级的不同进行渲染，利用Scheduler计算出不同的`Lanes`来表示不同的优先级，`Lanes`数值越小，优先级越高。
+-----
+
+- React 15: 只有Reconciler和Render
+- React 16: 增加了Scheduler和Fiber架构
+- React 17: 增加了Lanes优先级判定算法
 
 ### Fiber架构
 
@@ -31,7 +41,7 @@ fiberNode:
 1. 保存着更新相关的信息
 2. 保存优先级调度的信息
 
-工作原理：双缓存技术；Fiber架构中同时存在Fiber Tree，一棵是真实UI对应的Fiber Tree(前缓冲区)，另一棵是正在内存中构建的Fiber Tr
+工作原理：双缓存技术；Fiber架构中同时存在Fiber Tree，一棵是真实UI对应的Fiber Tree(前缓冲区：current Fiber Tree)，另一棵是正在内存中构建的Fiber Tree(后缓冲区：workInProgress Fiber Tree)
 
 ```javascript
 //fiber节点中的相关数据
@@ -1070,6 +1080,93 @@ React.createElemrnt('div',{onClick:this.handle()})
 1. 简化状态管理和副作用处理。之前都是类组件通过生命周期方法进行管理，十分复杂。
 2. 拆分复杂逻辑，提升代码可读性
 3. 避免类组件的复杂性，同时可以使得函数组件变成有状态组件或者实现生命周期函数
+
+#### 闭包陷阱
+
+React Hooks 中的闭包陷阱主要会发生在多种情况：
+
+- 在 useState 中使用闭包；
+- 在 useEffect 中使用闭包。
+
+##### useState 中的闭包陷阱
+
+在useState中使用闭包，主要是因为useState的参数只能在挂组件加载时执行一次。我们如果在useState中使用闭包，那么闭包中的变量值会被缓存，这意味着当我们在组件中更新状态时，闭包中的变量值不会随之更新。
+
+```javascript
+function Counter() {
+  const [count, setCount] = useState(0);
+  const handleClick = () => {
+    setTimeout(() => {
+      setCount(count + 1);
+    }, 1000);
+  };
+  const handleReset = () => {
+    setCount(0);
+  };
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={handleClick}>Increment</button>
+      <button onClick={handleReset}>Reset</button>
+    </div>
+  );
+}
+```
+
+在上面的代码中，我们定义了一个handleClick函数，它使用了一个闭包来缓存count的值。每次点击触发 handleClick 函数，1s 后 setCount 会将 count 值加 1，在这 1s 内，无论我们点击多少次 Increment 按钮，count 值都只会加 1。这是因为 setCount 所接收的 count 值是在闭包中被缓存的 count 值，这个值是始终不变的。1s 后 setTimeout 中的 setCount 生效，函数式组件 Counter 重新执行，会生成新的 handleClick 方法，形成新的闭包，此时闭包中缓存的 count 值也就变成了最新的 count 值。再继续点击 Increment 按钮，又会重复上述循环，每过 1s count 值会加 1.
+
+**改进方案**
+
+```javascript
+const handleClick = () => {
+  setTimeout(() => {
+    setCount(currentCount => currentCount + 1);
+  }, 1000);
+};
+```
+
+##### useEffect 的闭包陷阱
+
+在useEffect中使用闭包的问题则是因为useEffect中的函数是在每次组件更新时都会执行一次。如果我们在useEffect中使用闭包，那么这个闭包中的变量值也会被缓存，这样就可能会导致一些问题。
+
+```javascript
+function App() {
+  const [count, setCount] = useState(0);
+  
+  useEffect(() => {
+    const timer = setInterval(() => {
+      console.log(count);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+  
+  const handleClick = () => {
+    setCount(count + 1);
+  };
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={handleClick}>Increment</button>
+    </div>
+  );
+}
+```
+
+在这个例子中，我们使用了 useState 和 useEffect Hooks。在 useEffect 回调函数内部，我们使用了一个 setInterval 函数来输出 count 状态变量。然而，由于 useEffect 只会在组件首次渲染时执行一次，因此闭包中的 count 变量始终是首次渲染时的变量，而不是最新的值。
+
+**解决方案**
+
+```javascript
+useEffect(() => {
+  const timer = setInterval(() => {
+    console.log(count);
+  }, 1000);
+  return () => clearInterval(timer);
+}, [count]);
+```
+
+
 
 #### Hook的结构
 
