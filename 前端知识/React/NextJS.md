@@ -5,7 +5,7 @@ Next.js 是一个用于构建全栈 Web 应用程序的 React 框架。您可以
 
 ### 服务端渲染(SSR)
 
-服务端渲染：HTML页面在服务器端完成数据的加载和组装，客户端直接请求的是一个组装完成的HTML模板；
+服务端渲染：HTML页面在服务器端完成数据的加载和组装，客户端直接请求的是一个组装完成的HTML模板；服务端返回一个HTML字符串，浏览器直接渲染这个字符串，无需等待JavaScript加载和执行。
 
 优点：
 
@@ -13,13 +13,29 @@ Next.js 是一个用于构建全栈 Web 应用程序的 React 框架。您可以
 - 利于SEO
 
 缺点：
-
+- 水和的组件是没有优先级的，同时交互的化需要水和完成
 - 服务器压力大
 - 响应速度依赖于网络环境
 
+#### React的HydrateRoot
+在 SSR 模式下，React 的渲染分为两个阶段：
+1. Server端渲染
+ - React 组件树被渲染为静态 HTML 字符串（例如通过`renderToString()`或`renderToPipeableStream()`）
+ - HTML 被直接返回给浏览器，用户立即看到完整的页面
+2. Client端复用
+ - 浏览器加载 React bundle 后执行 `hydrateRoot(container, element)`
+ - React 在内存中构建一棵 Fiber 树（对应组件结构），**并尝试将这棵 Fiber 树与已有的 DOM 结构对齐**
+ - 匹配成功 → React 为 DOM 节点附加事件监听和状态 → 页面可交互
+ - 匹配失败 → React 会进行修正性重渲染
+ 
+ 请求script标签中的对象填充到前端，服务端的接口render一个string
+ hydrateRoot与createRoot的区别
+ - hydrateRoot 用于将 React 组件树与已有的 DOM 结构对齐，通常在 CSR 模式下使用
+ - createRoot 用于创建一个新的 React 根实例，通常在 SSR 模式下使用
+
 ### 客户端渲染(CSR)
 
-客户端渲染（CSR，Client-Side Rendering）是指**服务器返回一个基本的 HTML 页面，所有页面内容通过 JavaScript 在浏览器中动态加载和渲染**。  一般的SPA应用都是通过这种方式来进行构建。
+客户端渲染（CSR，Client-Side Rendering）是指**服务器返回一个基本的HTML页面，所有页面内容通过JavaScript在浏览器中动态加载和渲染**。  一般的SPA应用都是通过这种方式来进行构建。
 
 优点：
 
@@ -33,7 +49,7 @@ Next.js 是一个用于构建全栈 Web 应用程序的 React 框架。您可以
 
 #### SPA应用
 
-SPA（Single Page Application，单页应用）是一种网页应用架构，特点是在**单个 HTML 页面中动态更新内容**，无需每次用户操作都重新加载整个页面。常见的技术框架包括 React、Vue、Angular 等。(路由切换页面是在客户端更新对应的代码，CSR方式进行渲染)
+SPA（Single Page Application，单页应用）是一种网页应用架构，特点是在**单个HTML页面中动态更新内容**，无需每次用户操作都重新加载整个页面。常见的技术框架包括React、Vue、Angular 等。(路由切换页面是在客户端更新对应的代码，CSR方式进行渲染)
 
 ##### SPA 的工作机制
 
@@ -45,7 +61,7 @@ SPA（Single Page Application，单页应用）是一种网页应用架构，特
 2. 后续页面更新：
 
 - - 通过前端路由（如 React Router、Vue Router）在浏览器中“切换”页面
-  - 实际是拦截 URL 跳转，在客户端更新视图，不再向服务器请求完整 HTML
+  - 实际是拦截URL跳转，在客户端更新视图，不再向服务器请求完整 HTML
 
 ##### 优点
 
@@ -67,7 +83,7 @@ SPA（Single Page Application，单页应用）是一种网页应用架构，特
 3. **前端负担大**
    状态管理、路由控制、权限校验等都需在前端处理，复杂度上升。
 4. **浏览器兼容性问题**
-   部分老旧浏览器不支持 SPA 所依赖的特性（如 HTML5 History API）。
+   部分老旧浏览器不支持SPA所依赖的特性（如 HTML5 History API）。
 
 ##### 典型应用场景
 
@@ -77,7 +93,7 @@ SPA（Single Page Application，单页应用）是一种网页应用架构，特
 
 ### SSG静态站点生成
 
-静态生成（SSG，Static Site Generation）是一种在**构建时（Build Time）**将页面内容渲染为静态 HTML 文件的技术。构建后的 HTML 文件直接部署在 CDN 或 Web 服务器上，用户请求时不需要服务器计算即可快速响应。这种方式兼具高性能和低成本，常用于博客、文档站点、电商产品页等内容相对稳定的场景。  
+静态生成（SSG，Static Site Generation）是一种在**构建时（Build Time）**将页面内容渲染为静态HTML文件的技术。构建后的HTML 文件直接部署在CDN或Web服务器上，用户请求时不需要服务器计算即可快速响应。这种方式兼具高性能和低成本，常用于博客、文档站点、电商产品页等内容相对稳定的场景。  
 
 优点：
 
