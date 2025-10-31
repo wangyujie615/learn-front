@@ -1,45 +1,46 @@
 # React
 
-React由Meta公司研发，是一个用于构建web和原生交互界面的库。
+`React`由`Meta`公司研发，是一个用于构建`web`和原生交互界面的库。
 
 ## 设计思路
 
-React：将前端的语法描述为JS语法
+`React`：将前端的语法描述为`JS`语法
 
-Vue3：将前端页面描述为模板
+`Vue3`：将前端页面描述为模板
 
 现代前端框架具备的特点：
 
 1. 响应式更新
-2. AOT(预编译，将框架编译成可以理解的JS代码)
-3. 虚拟DOM
+2. `AOT`(预编译，将框架编译成可以理解的`JS`代码)
+3. 虚拟`DOM`
 
 ### React架构
 
-1. Scheduler(调度器)：调度任务的优先级
+1. `Scheduler`(调度器)：调度任务的优先级
 
-2. Reconciler(协调器)：VDOM的实现，负责根据变量的变化计算出UI的变化
+2. `Reconciler`(协调器)：`VDOM`的实现，负责根据变量的变化计算出`UI`的变化
 
-3. Render(渲染器)：负责将UI变化渲染到宿主环境中去
+3. `Render`(渲染器)：负责将`UI`变化渲染到宿主环境中去
 
-**注:** React 16相比之前有一个很大的不同，React16之前的VDOM渲染是通过DFS进行渲染，且渲染的过程无法中断；React 16以后的VDOM的渲染有了很大的优化，**VDOM渲染可中断且每个渲染任务都设置了一个过期时间，将整个过程拆分成多个宏任务；其次，16增加了调度器对任务的优先级进行调度**
+**注:** `React 16`相比之前有一个很大的不同，`React 16`之前的`VDOM`渲染是通过`DFS`进行渲染，且渲染的过程无法中断；`React 16`以后的`VDOM`的渲染有了很大的优化，**`VDOM`渲染可中断且每个渲染任务都设置了一个过期时间，将整个过程拆分成多个宏任务；其次，`16`增加了调度器对任务的优先级进行调度**
 
-React 16的渲染流程：
-注意：中断一般发生在Reconciler中的render阶段，commit阶段是无法中断的
+`React 16`的渲染流程：
+注意：中断一般发生在`Reconciler`中的`render`阶段，`commit`阶段是无法中断的。
+
 - 整个渲染任务被划分为时间切片进行渲染，当超过固定之间片会通过`MessageChannel`将未完成的任务以宏任务的形式发放给浏览器，被动地让浏览器自行安排执行时间。
-- 整个渲染任务也分为优先级的不同进行渲染，利用Scheduler计算出不同的`Lanes`来表示不同的优先级，`Lanes`数值越小，优先级越高。
+- 整个渲染任务也分为优先级的不同进行渲染，利用`Scheduler`计算出不同的`Lanes`来表示不同的优先级，`Lanes`数值越小，优先级越高。
 -----
 
-- React 15: 只有Reconciler和Render
-- React 16: 增加了Scheduler和Fiber架构
-- React 17: 增加了Lanes优先级判定算法
+- `React 15`: 只有`Reconciler`和`Render`
+- `React 16`: 增加了`Scheduler`和`Fiber`架构
+- `React 17`: 增加了`Lanes`优先级判定算法
 
-### Fiber架构
+### `Fiber`架构
 
-每个组件对应一个 **Fiber 节点**，构成**双向链表树结构**，包含以下关键信息：
+每个组件对应一个**`Fiber`节点**，构成**双向链表树结构**，包含以下关键信息：
 
 - **组件类型**：函数组件、类组件或原生标签。
-- **状态与副作用**：Hooks 状态（如 `useState`）、生命周期标记（如 `useEffect`）。
+- **状态与副作用**：`Hooks`状态（如 `useState`）、生命周期标记（如 `useEffect`）。
 - **调度信息**：任务优先级（`lane` 模型）、到期时间（`expirationTime`）。
 - **链表指针**：`child`（子节点）、`sibling`（兄弟节点）、`return`（父节点）。
 
@@ -47,12 +48,12 @@ React 16的渲染流程：
 
 
 
-fiberNode:
+`fiberNode`:
 
 1. 保存着更新相关的信息
 2. 保存优先级调度的信息
 
-工作原理：双缓存技术；Fiber架构中同时存在Fiber Tree，一棵是真实UI对应的Fiber Tree(前缓冲区：current Fiber Tree)，另一棵是正在内存中构建的Fiber Tree(后缓冲区：workInProgress Fiber Tree)
+工作原理：双缓存技术；`Fiber`架构中同时存在`Fiber Tree`，一棵是真实UI对应的`Fiber Tree`(前缓冲区：`current Fiber Tree`)，另一棵是正在内存中构建的`Fiber Tree`(后缓冲区：`workInProgress Fiber Tree`)
 
 ```javascript
 // Fiber 节点结构简化示例
@@ -72,27 +73,26 @@ const fiberNode = {
 }
 ```
 
-### 如何理解React Fiber架构
+### 如何理解`React Fiber`架构
 
-1. **Fiber 架构的本质与设计目标**
+1. **`Fiber`架构的本质与设计目标**
 
-Fiber是React 16+的**核心算法重写**，本质是**基于链表的增量式协调模型**。其核心目标并非单纯提升性能，而是重构架构以实现：
+`Fiber`是`React 16+`的**核心算法重写**，本质是**基于链表的增量式协调模型**。其核心目标并非单纯提升性能，而是重构架构以实现：
 
 - **可中断的异步渲染**：将同步递归的调和过程拆解为可暂停/恢复的异步任务。
 - **优先级调度**：高优先级任务（如用户输入）可打断低优先级任务（如数据更新）。
-- **并发模式基础**：为 `Suspense`、`useTransition` 等特性提供底层支持。
+- **并发模式基础**：为 `Suspense`、`useTransition`等特性提供底层支持。
 
-2. **Fiber 节点的核心设计**
+2. **`Fiber`节点的核心设计**
 
-每个组件对应一个 **Fiber 节点**，构成**双向链表树结构**，包含以下关键信息：
+每个组件对应一个 **`Fiber`节点**，构成**双向链表树结构**，包含以下关键信息：
 
 - **组件类型**：函数组件、类组件或原生标签。
-- **状态与副作用**：Hooks 状态（如 `useState`）、生命周期标记（如 `useEffect`）。
+- **状态与副作用**：`Hooks`状态（如 `useState`）、生命周期标记（如 `useEffect`）。
 - **调度信息**：任务优先级（`lane` 模型）、到期时间（`expirationTime`）。
 - **链表指针**：`child`（子节点）、`sibling`（兄弟节点）、`return`（父节点）。
 
 ```javascript
-javascript 体验AI代码助手 代码解读复制代码// Fiber 节点结构简化示例
 const fiberNode = {
   tag: FunctionComponent, // 组件类型
   stateNode: ComponentFunc, // 组件实例或 DOM 节点
@@ -109,32 +109,32 @@ const fiberNode = {
 }
 ```
 
-3. **Fiber 协调流程（两阶段提交）**
+3. **`Fiber` 协调流程（两阶段提交）**
 
-**阶段 1：Reconciliation（协调/渲染阶段）**
+**阶段 1：`Reconciliation`（协调/渲染阶段）**
 
 - **可中断的增量计算**：
 
-  React 将组件树遍历拆解为多个 Fiber 工作单元，通过**循环（而非递归）逐个处理**。
+  `React` 将组件树遍历拆解为多个 `Fiber` 工作单元，通过**循环（而非递归）逐个处理**。
 
-  - 每次循环执行一个Fiber节点，生成子Fiber并连接成树。
-  - 通过`requestIdleCallback`（或Scheduler包）在浏览器空闲时段执行，避免阻塞主线程。
+  - 每次循环执行一个`Fiber`节点，生成子`Fiber`并连接成树。
+  - 通过`requestIdleCallback`（或`Scheduler`包）在浏览器空闲时段执行，避免阻塞主线程。
 
 - **对比策略**：
    根据 `key` 和 `type` 复用节点，标记 `Placement`（新增）、`Update`（更新）、`Deletion`（删除）等副作用。
 
-**阶段 2：Commit（提交阶段）**
+**阶段 2：`Commit`（提交阶段）**
 
-- **不可中断的 DOM 更新：**
-   同步执行所有标记的副作用（如DOM操作、生命周期调用），确保UI一致性。
+- **不可中断的 `DOM` 更新：**
+   同步执行所有标记的副作用（如`DOM`操作、生命周期调用），确保`UI`一致性。
 - **副作用分类：**
-  - **BeforeMutation**：`getSnapshotBeforeUpdate`。
-  - **Mutation**：DOM 插入/更新/删除。
-  - **Layout**：`useLayoutEffect`、`componentDidMount`/`Update`。
+  - **`BeforeMutation`**：`getSnapshotBeforeUpdate`。
+  - **`Mutation`**：`DOM`插入/更新/删除。
+  - **`Layout`**：`useLayoutEffect`、`componentDidMount`/`Update`。
 
 4. **优先级调度机制**
 
-React通过 **Lane模型** 管理任务优先级（共31个优先级车道）：
+`React`通过 **`Lane`模型** 管理任务优先级（共`31`个优先级车道）：
 
 - 事件优先级：
 
@@ -149,20 +149,20 @@ React通过 **Lane模型** 管理任务优先级（共31个优先级车道）：
 - 调度策略：
 
   - 高优先级任务可抢占低优先级任务的执行权。
-  - 过期任务（如 Suspense 回退）会被强制同步执行。
+  - 过期任务（如`Suspense`回退）会被强制同步执行。
 
-5. **Fiber 架构的优势与局限性**
+5. **`Fiber`架构的优势与局限性**
 
 **优势**
 
 - **流畅的用户体验**：异步渲染避免主线程阻塞，保障高优先级任务即时响应。
 - **复杂场景优化**：支持大规模组件树的高效更新（如虚拟滚动、动画串联）。
-- **未来特性基础**：为并发模式（Concurrent Mode）、离线渲染（SSR）提供底层支持。
+- **未来特性基础**：为并发模式（`Concurrent Mode`）、离线渲染（`SSR`）提供底层支持。
 
 **局限性**
 
 - **学习成本高**：开发者需理解底层调度逻辑以优化性能。
-- **内存开销**：Fiber 树的双向链表结构比传统虚拟 DOM 占用更多内存。
+- **内存开销**：`Fiber`树的双向链表结构比传统虚拟`DOM`占用更多内存。
 
 6. **与旧架构的关键差异**
 
