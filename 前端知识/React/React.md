@@ -1297,7 +1297,7 @@ React Hooks 中的闭包陷阱主要会发生在多种情况：
 
 ##### useState 中的闭包陷阱
 
-在useState中使用闭包，主要是因为useState的参数只能在挂组件加载时执行一次。我们如果在useState中使用闭包，那么闭包中的变量值会被缓存，这意味着当我们在组件中更新状态时，闭包中的变量值不会随之更新。
+在useState中使用闭包，主要是因为`useState`的参数只能在挂组件加载时执行一次。我们如果在`useState`中使用闭包，那么闭包中的变量值会被缓存，这意味着当我们在组件中更新状态时，闭包中的变量值不会随之更新。
 
 ```javascript
 function Counter() {
@@ -1480,7 +1480,7 @@ function Inputform(){
 + 组件(或者其祖先之一)的状态发生变化
 
 ##### 初次渲染
-<font style="color:rgb(35, 39, 47);">当应用启动时，会触发初次渲染。框架和沙箱有时会隐藏这部分代码，但它是通过</font>**<font style="color:rgb(35, 39, 47);">调用createRoot方法并传入目标DOM节点</font>**<font style="color:rgb(35, 39, 47);">，然后用你的组件调用 </font>`render`<font style="color:rgb(35, 39, 47);"> 函数完成的。</font>
+<font style="color:rgb(35, 39, 47);">当应用启动时，会触发初次渲染。框架和沙箱有时会隐藏这部分代码，但它是通过</font>**<font style="color:rgb(35, 39, 47);">调用`createRoot`方法并传入目标`DOM`节点</font>**<font style="color:rgb(35, 39, 47);">，然后用你的组件调用 </font>`render`<font style="color:rgb(35, 39, 47);"> 函数完成的。</font>
 
 ```jsx
 import Image from './Image.js';
@@ -1491,12 +1491,12 @@ root.render(<Image />);
 ```
 
 ##### 状态更新时渲染
-<font style="color:rgb(35, 39, 47);">一旦组件被初次渲染，你就可以</font>**<font style="color:rgb(35, 39, 47);">通过使用set函数更新其状态来触发之后的渲染</font>**<font style="color:rgb(35, 39, 47);">。更新组件的状态会自动将一次渲染送入队列。</font>
+<font style="color:rgb(35, 39, 47);">一旦组件被初次渲染，你就可以</font>**<font style="color:rgb(35, 39, 47);">通过使用`set`函数更新其状态来触发之后的渲染</font>**<font style="color:rgb(35, 39, 47);">。更新组件的状态会自动将一次渲染送入队列。</font>
 
-#### <font style="color:rgb(35, 39, 47);">React渲染组件</font>
-**<font style="color:rgb(35, 39, 47);">React在调用你的组件。</font>**
+#### <font style="color:rgb(35, 39, 47);">`React`渲染组件</font>
+**<font style="color:rgb(35, 39, 47);">`React`在调用你的组件。</font>**
 
-+ **<font style="color:rgb(35, 39, 47);">在进行初次渲染时,</font>**<font style="color:rgb(35, 39, 47);"> React会调用</font>**<font style="color:rgb(35, 39, 47);">根组件</font>**<font style="color:rgb(35, 39, 47);">。创建对应标签的DOM节点</font>
++ **<font style="color:rgb(35, 39, 47);">在进行初次渲染时,</font>**<font style="color:rgb(35, 39, 47);"> `React`会调用</font>**<font style="color:rgb(35, 39, 47);">根组件</font>**<font style="color:rgb(35, 39, 47);">。创建对应标签的`DOM`节点</font>
 + **<font style="color:rgb(35, 39, 47);">对于后续的渲染,</font>**<font style="color:rgb(35, 39, 47);"> React会调用</font>**<font style="color:rgb(35, 39, 47);">内部状态更新触发了渲染的函数组件</font>**<font style="color:rgb(35, 39, 47);">。</font>
 
 <font style="color:rgb(35, 39, 47);">这个</font>**<font style="color:rgb(35, 39, 47);">过程是递归的</font>**<font style="color:rgb(35, 39, 47);">：如果更新后的组件会返回某个另外的组件，那么 React 接下来就会渲染 </font>_<font style="color:rgb(35, 39, 47);">那个</font>_<font style="color:rgb(35, 39, 47);"> 组件，而如果那个组件又返回了某个组件，那么 React 接下来就会渲染那个组件，以此类推。这个过程会持续下去，直到没有更多的嵌套组件并且 React 确切知道哪些东西应该显示到屏幕上为止。</font>
@@ -1671,7 +1671,7 @@ function App(){
 
 **返回值：**
 
-<font style="color:rgb(35, 39, 47);">在初次渲染时，</font>`useMemo`<font style="color:rgb(35, 39, 47);"> 返回</font>**<font style="color:#ECAA04;">不带参数调用 </font>**`<font style="color:#ECAA04;">calculateValue</font>`**<font style="color:#ECAA04;"> 的结果</font>**<font style="color:rgb(35, 39, 47);">。</font>
+<font style="color:rgb(35, 39, 47);">在初次渲染时，</font>`useMemo`<font style="color:rgb(35, 39, 47);"> 返回</font>**<font style="color:#ECAA04;">不带参数调用 </font>**`calculateValue`**<font style="color:#ECAA04;"> 的结果</font>**<font style="color:rgb(35, 39, 47);">。</font>
 
 <font style="color:rgb(35, 39, 47);">在接下来的渲染中，如果依赖项没有发生改变，它将返回上次缓存的值；否则将再次调用 </font>`calculateValue`<font style="color:rgb(35, 39, 47);">，并返回最新结果。</font>
 **<font style="color:rgb(35, 39, 47);">使用场景：</font>**
@@ -1847,11 +1847,10 @@ const addTodo = text=>{
 ##### Reducer
 **<font style="color:rgb(28, 30, 33);">reducer</font>**<font style="color:rgb(28, 30, 33);"> 是一个函数，接收当前的 </font>`state`<font style="color:rgb(28, 30, 33);"> 和一个 </font>`action`<font style="color:rgb(28, 30, 33);"> 对象，必要时决定如何更新状态，并返回新状态。函数签名是：</font>`(state, action) => newState`<font style="color:rgb(28, 30, 33);">。 </font>**<font style="color:rgb(28, 30, 33);">你可以将 reducer </font>**<font style="color:#ECAA04;">视为一个事件监听器</font><font style="color:rgb(28, 30, 33);">，它根据接收到的 action（事件）类型处理事件。</font>
 
-
 <font style="color:rgb(28, 30, 33);">Reducer必需符合以下规则：</font>
 
-+ <font style="color:rgb(28, 30, 33);">仅使用</font>`<font style="color:rgb(28, 30, 33);">state</font>`<font style="color:rgb(28, 30, 33);"> 和</font>`<font style="color:rgb(28, 30, 33);">action</font>`<font style="color:rgb(28, 30, 33);">参数计算新的状态值</font>
-+ **<font style="color:#74B602;">禁止直接修改</font>**`**<font style="color:#74B602;">state</font>**`<font style="color:rgb(28, 30, 33);">。必须通过复制现有的</font>`<font style="color:rgb(28, 30, 33);">state</font>`<font style="color:rgb(28, 30, 33);">并对复制的值进行更改的方式来做 </font>_<font style="color:rgb(28, 30, 33);">不可变更新（immutable updates）</font>_<font style="color:rgb(28, 30, 33);">。</font>
++ <font style="color:rgb(28, 30, 33);">仅使用</font>`state` 和`action`参数计算新的状态值</font>
++ **<font style="color:#74B602;">禁止直接修改</font>**`state`。必须通过复制现有的</font>`state`<font style="color:rgb(28, 30, 33);">并对复制的值进行更改的方式来做 </font>_<font style="color:rgb(28, 30, 33);">不可变更新（immutable updates）</font>_<font style="color:rgb(28, 30, 33);">。</font>
 + **<font style="color:#ECAA04;">禁止任何异步逻辑、依赖随机值或导致其他“副作用”的代码</font>**
 
 ```javascript
