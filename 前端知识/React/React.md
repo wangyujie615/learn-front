@@ -53,7 +53,7 @@
 1. 保存着更新相关的信息
 2. 保存优先级调度的信息
 
-工作原理：双缓存技术；`Fiber`架构中同时存在`Fiber Tree`，一棵是真实UI对应的`Fiber Tree`(前缓冲区：`current Fiber Tree`)，另一棵是正在内存中构建的`Fiber Tree`(后缓冲区：`workInProgress Fiber Tree`)
+工作原理：**双缓存技术**；`Fiber`架构中同时存在`Fiber Tree`，一棵是真实UI对应的`Fiber Tree`(前缓冲区：`current Fiber Tree`)，另一棵是正在内存中构建的`Fiber Tree`(后缓冲区：`workInProgress Fiber Tree`)
 
 ```javascript
 // Fiber 节点结构简化示例
@@ -85,11 +85,11 @@ const fiberNode = {
 
 2. **`Fiber`节点的核心设计**
 
-每个组件对应一个 **`Fiber`节点**，构成**双向链表树结构**，包含以下关键信息：
+每个组件对应一个**`Fiber`节点**，构成**双向链表树结构**，包含以下关键信息：
 
 - **组件类型**：函数组件、类组件或原生标签。
 - **状态与副作用**：`Hooks`状态（如 `useState`）、生命周期标记（如 `useEffect`）。
-- **调度信息**：任务优先级（`lane` 模型）、到期时间（`expirationTime`）。
+- **调度信息**：任务优先级（`lane`模型）、到期时间（`expirationTime`）。
 - **链表指针**：`child`（子节点）、`sibling`（兄弟节点）、`return`（父节点）。
 
 ```javascript
@@ -109,23 +109,23 @@ const fiberNode = {
 }
 ```
 
-3. **`Fiber` 协调流程（两阶段提交）**
+3. **`Fiber`协调流程（两阶段提交）**
 
 **阶段 1：`Reconciliation`（协调/渲染阶段）**
 
 - **可中断的增量计算**：
 
-  `React` 将组件树遍历拆解为多个 `Fiber` 工作单元，通过**循环（而非递归）逐个处理**。
+  `React`将组件树遍历拆解为多个 `Fiber`工作单元，通过**循环（而非递归）逐个处理**。
 
   - 每次循环执行一个`Fiber`节点，生成子`Fiber`并连接成树。
   - 通过`requestIdleCallback`（或`Scheduler`包）在浏览器空闲时段执行，避免阻塞主线程。
 
 - **对比策略**：
-   根据 `key` 和 `type` 复用节点，标记 `Placement`（新增）、`Update`（更新）、`Deletion`（删除）等副作用。
+   根据 `key`和`type`复用节点，标记 `Placement`（新增）、`Update`（更新）、`Deletion`（删除）等副作用。
 
 **阶段 2：`Commit`（提交阶段）**
 
-- **不可中断的 `DOM` 更新：**
+- **不可中断的`DOM`更新：**
    同步执行所有标记的副作用（如`DOM`操作、生命周期调用），确保`UI`一致性。
 - **副作用分类：**
   - **`BeforeMutation`**：`getSnapshotBeforeUpdate`。
@@ -134,7 +134,7 @@ const fiberNode = {
 
 4. **优先级调度机制**
 
-`React`通过 **`Lane`模型** 管理任务优先级（共`31`个优先级车道）：
+`React`通过**`Lane`模型**管理任务优先级（共`31`个优先级车道）：
 
 - 事件优先级：
 
@@ -170,8 +170,8 @@ const fiberNode = {
 | -------------- | ----------------------------- | ----------------------------- |
 | **遍历方式**   | 递归（不可中断）              | 循环（可中断 + 恢复）         |
 | **任务调度**   | 同步执行，阻塞主线程          | 异步分片，空闲时段执行        |
-| **优先级控制** | 无                            | 基于Lane模型的优先级抢占      |
-| **数据结构**   | 虚拟DOM树                     | Fiber链表树（含调度信息）     |
+| **优先级控制** | 无                            | 基于`Lane`模型的优先级抢占    |
+| **数据结构**   | 虚拟`DOM`树                   | `Fiber`链表树（含调度信息）   |
 
 ## 简介
 
@@ -184,7 +184,7 @@ const fiberNode = {
 
 **优势：**
 
-+ 与传统基于DOM开发：组件化的开发方式、不错的性能
++ 与传统基于`DOM`开发：组件化的开发方式、不错的性能
 + 相较于其他前端框架：丰富的生态、跨平台支持
 
 ### 单向数据绑定
@@ -215,7 +215,7 @@ npx create-react-app react-basic
 
 ### 真实DOM
 
-真实DOM：原生的JS的DOM对象就是真实DOM
+真实`DOM`：原生的JS的DOM对象就是真实DOM
 
 **缺陷**：
 
@@ -238,7 +238,7 @@ npx create-react-app react-basic
 |特性|真实DOM|虚拟DOM|
 |:-:|:-:|:-:|
 |定义|浏览器中的实际文档对象模型|真实 DOM 的轻量级JavaScript抽象表示|
-|操作方式|直接通过 JavaScript 操作|通过框架（如 React）间接操作|
+|操作方式|直接通过`JavaScript`操作|通过框架（如 `React`）间接操作|
 |**性能**|操作性能低，**频繁操作会导致重排和重绘**(引申到浏览器的过程)|操作性能高，**通过 Diff 算法减少DOM操作**|
 |**更新机制**|**同步更新(修改一次更新一次)**|**异步更新，合并多次更新(进行批处理合并更新)**|
 |开发复杂度|手动操作DOM，开发复杂|自动更新 DOM，开发简单|
@@ -636,11 +636,11 @@ class MyComponent extends Component {
 
 - 装载阶段
   - `constructor`: **构造函数**，在组件**初始化的时候触发一次**。用于**设置初始化状态(`State`)，绑定成员函数上下文引用**。
-  - `static getDerivedStateFromProps`:该函数会在**组件实例化**后和**重新渲染**前调用（生成 VirtualDOM 之后，实际 DOM 挂载之前），意味着无论是**父组件的更新、`props` 的变化或通过 `setState` 更新组件内部的 State都会被调用**。可以用于比较`props`和`state`来加一些限制条件，放置无用的`state`更新。
+  - `static getDerivedStateFromProps`:该函数会在**组件实例化**后和**重新渲染**前调用（生成`VirtualDOM`之后，实际`DOM`挂载之前），意味着无论是**父组件的更新、`props`的变化或通过`setState`更新组件内部的 State都会被调用**。可以用于比较`props`和`state`来加一些限制条件，放置无用的`state`更新。
   - `render`:**渲染函数**，用于**渲染**`DOM`**结构**，可以访问组件`state`与`prop`属性
   - `componentDidMount`:组件挂载到真实`DOM`节点后执行，其在`render`方法之后执行，此方法**多用于执行一些数据获取，事件监听**等操作
 - 更新阶段
-  - `static getDerivedStateFromProps`:该函数会在**组件实例化**后和**重新渲染**前调用（生成 VirtualDOM 之后，实际 DOM 挂载之前），意味着无论是**父组件的更新、`props` 的变化或通过 `setState` 更新组件内部的 State都会被调用**。可以用于比较`props`和`state`来加一些限制条件，放置无用的`state`更新。
+  - `static getDerivedStateFromProps`:该函数会在**组件实例化**后和**重新渲染**前调用（生成`VirtualDOM`之后，实际`DOM`挂载之前），意味着无论是**父组件的更新、`props` 的变化或通过 `setState` 更新组件内部的 State都会被调用**。可以用于比较`props`和`state`来加一些限制条件，放置无用的`state`更新。
   - `shouldComponentUpdate`:**用于告知组件本身基于当前的**`props`**和**`state`**是否需要重新渲染组件**，默认情况返回`true`
   - `render`: **渲染函数**，用于**渲染**`DOM`**结构**，可以访问组件`state`与`prop`属性
   - `getSnapshotBeforeUpdate`:该方法返回的一个`Snapshot`值，作为`componentDidUpdate`第三个参数传入。此方法的目的**在于获取组件更新前的一些信息**，比如组件的滚动位置之类的，在组件更新后可以根据这些信息**恢复**一些UI视觉上的状态
@@ -668,7 +668,7 @@ useEffect(()=>{
 
 ### 受控组件和非受控组件
 
-**受控组件**：组件的状态（例如输入字段的值）完全受控于 `React` 组件的 `state` 或 `props`。这意味着组件的值和状态由 `React` 进行管理和更新。
+**受控组件**：组件的状态（例如输入字段的值）完全受控于`React`组件的`state`或`props`。这意味着组件的值和状态由 `React` 进行管理和更新。
 
 ```jsx
 import React, { useState } from 'react';
@@ -703,7 +703,7 @@ export default ControlledInput;
 
 适用的场景：需要动态更新、表单验证、实时计算（如搜索框自动补全）。
 
-**非受控组件**：`DOM` 元素的值和状态不受 `React` 控制，而是由`DOM`元素本身管理。一般情况是在初始化的时候接受外部数据，然后自己在内部存储其自身状态。
+**非受控组件**：`DOM` 元素的值和状态不受`React`控制，而是由`DOM`元素本身管理。一般情况是在初始化的时候接受外部数据，然后自己在内部存储其自身状态。
 
 当需要时，可以使用`ref` 查询 `DOM`并查找其当前值。
 
@@ -767,7 +767,7 @@ import {Button} from './Button.js'
 方式：
 
 1. 行内样式(不推荐)
-2. class类名控制
+2. `class`类名控制
 
 ```jsx
 // 1.行内样式控制
@@ -787,7 +787,7 @@ function App() {
 ```
 
 ### 将props传递给组件
-<font style="color:rgb(35, 39, 47);">React 组件使用 </font>_**<font style="color:rgb(35, 39, 47);">props</font>**_**<font style="color:rgb(35, 39, 47);"> </font>**<font style="color:rgb(35, 39, 47);">来</font>**<font style="color:rgb(35, 39, 47);">互相通信</font>**<font style="color:rgb(35, 39, 47);">。每个父组件都可以提供props给它的子组件，从而将一些信息传递给它。</font>
+<font style="color:rgb(35, 39, 47);">`React` 组件使用 </font>_**<font style="color:rgb(35, 39, 47);">props</font>**_**<font style="color:rgb(35, 39, 47);"> </font>**<font style="color:rgb(35, 39, 47);">来</font>**<font style="color:rgb(35, 39, 47);">互相通信</font>**<font style="color:rgb(35, 39, 47);">。每个父组件都可以提供props给它的子组件，从而将一些信息传递给它。</font>
 
 <font style="color:rgb(35, 39, 47);">props：传递给JSX标签的信息。可以传递</font>**<font style="color:rgb(35, 39, 47);">任意的数据</font>**<font style="color:rgb(35, 39, 47);">(数字、字符串、布尔值、数组、对象、函数、JSX)，子组件</font>**<font style="color:rgb(35, 39, 47);">只能读取</font>**<font style="color:rgb(35, 39, 47);">props中的数据，不能直接修改。</font>
 
@@ -826,7 +826,7 @@ function Son(props){
 ```
 
 #### 嵌套标签(重要)
-将自己定义的标签作为props嵌套到另外一个自定义标签
+将自己定义的标签作为`props`嵌套到另外一个自定义标签
 
 ```jsx
 import { getImageUrl } from "./utils";
@@ -1061,8 +1061,8 @@ function Father() {
 
 #### render阶段
 
-1. beginWork(递): 创建下一级fiberNode，标记相应的操作的标记，将每个fiber划分为一个可以分割的单位，创建的过程中判断过期没，若过期下一次执行从中断处开始执行。
-2. completeWork(归): 如存在兄弟节点，继续传递；反之，向上回归；标记更新操作的标记，向上进行flags冒泡
+1. `beginWork`(递): 创建下一级`fiberNode`，标记相应的操作的标记，将每个`fiber`划分为一个可以分割的单位，创建的过程中判断过期没，若过期下一次执行从中断处开始执行。
+2. `completeWork`(归): 如存在兄弟节点，继续传递；反之，向上回归；标记更新操作的标记，向上进行`flags`冒泡
 
 根据`mount`和`update`流程不同
 
@@ -1118,11 +1118,11 @@ function Father() {
 
 **`Keys` 是 `React` 用于追踪哪些列表中元素被修改、被添加或者被移除的辅助标识。在开发过程中，我们需要保证某个元素的 `key` 在其同级元素中具有唯一性。**
 
-在 `React Diff` 算法中`React `会**借助元素的 `Key` 值来判断该元素是新近创建的还是被移动而来的元素，从而减少不必要的元素重渲染此外，`React` 还需要借助 Key 值来判断元素与本地状态的关联关系。**
+在 `React Diff` 算法中`React `会**借助元素的 `Key` 值来判断该元素是新近创建的还是被移动而来的元素，从而减少不必要的元素重渲染此外，`React` 还需要借助`Key`值来判断元素与本地状态的关联关系。**
 
 注意事项：
 
-- key值一定要和具体的元素一 一对应；
+- `key`值一定要和具体的元素一 一对应；
 - **尽量不要用数组的index去作为key；**
 - 不要在render的时候用随机数或者其他操作给元素加上不稳定的key，这样造成的性能开销比不加key的情况下更糟糕。
 
