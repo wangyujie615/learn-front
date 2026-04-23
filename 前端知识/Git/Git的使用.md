@@ -1,7 +1,5 @@
 # Git的使用
 
-![img](https://camo.githubusercontent.com/2601e87762cbc282fd0f2761742b3eada2a0086a93cf02f387f1cbe513a95455/68747470733a2f2f70362d6a75656a696e2e62797465696d672e636f6d2f746f732d636e2d692d6b3375316662706663702f31343562306364666139386134613963623732346437343561313436366334377e74706c762d6b3375316662706663702d7a6f6f6d2d312e696d616765)
-
 ![img](https://cdn.nlark.com/yuque/0/2025/jpeg/43189118/1744687779638-b57c9eaf-5031-413c-acb5-7602890d30a3.jpeg)
 
 ## 配置
@@ -20,8 +18,9 @@ git config --global color.ui quto //启用彩色命令行输出
 
 ```javascript
 git status  //查看那个分支
-git branch [branch-name] //创建一个分支
-git switch -c [branch-name] //切换指定分支并更新工作目录
+git checkout -b [branch-name] // 创建并切换一个分支
+git branch // 查看所有本地分支
+git checkout [branch-name] // 切换分支
 git merge [branch] // 将指定分支的历史合并到当前分支。
 git branch -d [branch-name] // 删除指定分支
 ```
@@ -71,3 +70,65 @@ git reset --hard [commit] // 放弃所有历史，改回指定提交。
 出现的原因：分支代码与远程仓库代码不一致导致的问题。
 
 比如：拉下分支代码后，主分支代码进行了修改，但是本地代码没有更新(先pull后commit,push)避免代码冲突
+
+注意提交方式：
+
+- 若多人开发在同一个分支上，提交前尽可能先pull, 手动解决冲突后，再commit提交
+- （推荐方式）多人多分支开发，即：开发时从稳定主分支（已部署版本）中切分支出来开发，开发完远程提交后merge。需要专门人员对代码进行审核
+- （若无人审核代码）采用本地分支合并的方式进行代码合并，即本地保持一个分支与远程稳定版本分支一致，在自己开发的代码在本地合并后，再push到远程稳定分支上
+
+解决代码冲突的方式：手动合并冲突的代码
+
+## Git提交规范
+
+**git commit 规范**
+整体格式: type(scope):subject
+
+```
+docs(Git): 提交git commit规范
+```
+
+type:
+
+- feat: 新增功能
+- fix: 修复bug
+- docs: 只修改文档，比如Readme等
+- style: 只修改空格、缩进、逗号等等
+- refactor: 代码重构，没有重加新功能或者修改bug
+- perf: 优化相关，比如提升性能、体验
+- test: 测试用例，包括单元测试、集成测试等
+- chore: 改变构建流程、或者增加依赖库、工具等
+- revert: 回滚到上一个版本
+
+## 工程化分支管理
+
+```
+master/main          # 主分支，永远代表生产环境代码，这个分支只能从其他分支合并，不能在这个分支直接修改。
+develop              # 开发主分支，所有功能合并到此分支，这个主要合
+并与其他分支，比如 Feature 分支。
+release/x.y.z        # 发布分支，用于准备版本发布
+hotfix/x.y.z+1       # 紧急修复分支，直接从master派生
+feature/*            # 功能分支，开发新功能
+```
+
+### 功能开发阶段
+
+1. 从develop分支创建feature分支
+2. 开发结束后合并到develop分支
+
+### 版本发布阶段
+
+1. 从develop分支中创建release分支
+2. release分支进行测试
+3. 若测试通过就合并到master分支，打标签部署到生产环境，合并master分支到develop分支（保持develop分支与master分支一致），删除release分支
+4. 若测试没通过，则在release分支上进行修复
+
+### 紧急修复分支
+
+触发条件：生产环境出现问题，需要立即修复
+
+操作：
+
+1. 直接从master对应标签创建hotfix分支
+2. 修复后同时更新master和develop
+3. 版本号遵循语义化版本规则（如从1.2.0到1.2.1）
