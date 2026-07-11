@@ -6,7 +6,6 @@ Promise A+ 规范的具体内容
 3. value,返回成功执行之后的值
 4. exception, 通过 throw 语法
 5. reason, 拒绝
-
 ### 要求
 1. 状态
 pending(等待)、fulfilled(成功)、rejected(失败)

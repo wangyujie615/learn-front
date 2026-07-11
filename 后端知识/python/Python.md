@@ -23,14 +23,14 @@
 
 `@dataclass` 是 Python 3.7 引入的一个装饰器，用于**自动生成类的样板代码**
 
-|   参数   | 默认值  |                说明                |
-| :------: | :-----: | :--------------------------------: |
+|    参数    |   默认值   |              说明              |
+| :------: | :-----: | :--------------------------: |
 |  `init`  | `True`  |      是否生成 `__init__` 方法      |
 |  `repr`  | `True`  |      是否生成 `__repr__` 方法      |
 |   `eq`   | `True`  |       是否生成 `__eq__` 方法       |
 | `order`  | `False` | 是否生成 `<`, `>`, `<=`, `>=` 方法 |
-| `frozen` | `False` |         是否不可变（只读）         |
-| `slots`  | `False` |   是否使用 `__slots__` 节省内存    |
+| `frozen` | `False` |          是否不可变（只读）           |
+| `slots`  | `False` |    是否使用 `__slots__` 节省内存     |
 
 #### `field()`
 
@@ -221,7 +221,7 @@ c.myMethod()         # 子类调用重写方法
 
 #### 类的专有方法
 
-- **__init__ :** 构造函数，在生成对象时调用
+- ``__init__``: 构造函数，在生成对象时调用
 - **__del__ :** 析构函数，释放对象时使用
 - **__repr__ :** 打印，转换
 - **__setitem__ :** 按照索引赋值
@@ -503,7 +503,7 @@ print "Exiting Main Thread"
 1. `asyncio.run(coro, *, debug=False)` : 运行一个顶层协程，管理事件循环的生命周期。是程序的主入口。
 1. `asyncio.create_task(coro, *, name=None)` :  将协程包装成一个 Task 对象，并排入事件循环等待调度。这是实现并发的主要方式。
 
-![img](./img/asyncio-python-runoob12-scaled.jpg)
+![img](asyncio-python-runoob12-scaled.jpg)
 
 #### **1. 核心函数**
 
