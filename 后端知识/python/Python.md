@@ -6,20 +6,20 @@
 
 **`typing`** 是 Python 3.5+ 的标准库，用于**类型提示（Type Hints）**，帮助静态类型检查器（如 mypy）、IDE 和语法检查器理解代码中的类型信息 。
 
-|        类型        |    说明    |                          示例                           |
-| :----------------: | :--------: | :-----------------------------------------------------: |
-|     `List[T]`      |    列表    |                `List[int]` = `[1, 2, 3]`                |
-|    `Dict[K, V]`    |    字典    |              `Dict[str, int]` = `{"a": 1}`              |
-|  `Tuple[T1, T2]`   |    元组    |             `Tuple[str, int]` = `("a", 1)`              |
-|   `Optional[T]`    |  可选类型  |             `Optional[str]` = `str | None`              |
-|   `Union[A, B]`    |  联合类型  |             `Union[int, str]` = `int | str`             |
-| `Callable[[A], B]` | 可调用对象 | `Callable[[int], str]` 表示接受 `int` 返回 `str` 的函数 |
-|       `Any`        |  任意类型  |                      跳过类型检查                       |
-|   `Sequence[T]`    |  序列类型  |                 比 `List` 更通用的抽象                  |
+|         类型         |  说明   |                       示例                       |     |
+| :----------------: | :---: | :--------------------------------------------: | --- |
+|     `List[T]`      |  列表   |           `List[int]` = `[1, 2, 3]`            |     |
+|    `Dict[K, V]`    |  字典   |         `Dict[str, int]` = `{"a": 1}`          |     |
+|  `Tuple[T1, T2]`   |  元组   |         `Tuple[str, int]` = `("a", 1)`         |     |
+|   `Optional[T]`    | 可选类型  |            `Optional[str]` = `str`             |     |
+|   `Union[A, B]`    | 联合类型  |           `Union[int, str]` = `int`            |     |
+| `Callable[[A], B]` | 可调用对象 | `Callable[[int], str]` 表示接受 `int` 返回 `str` 的函数 |     |
+|       `Any`        | 任意类型  |                     跳过类型检查                     |     |
+|   `Sequence[T]`    | 序列类型  |                比 `List` 更通用的抽象                 |     |
 
 ### dataclasses
 
-**`dataclasses`** 是 `Python 3.7+` 引入的标准库，用于**自动生成类的特殊方法**（如 `__init__`、`__repr__`、`__eq__` 等），简化数据类的定义 。(类似`springboot`种的注解可以自动生成一些类的方法)
+**`dataclasses`** 是 `Python 3.7+` 引入的标准库，用于**自动生成类的特殊方法**（如`__init__`、`__repr__`、`__eq__` 等），简化数据类的定义 。(类似`springboot`种的注解可以自动生成一些类的方法)
 
 `@dataclass` 是 Python 3.7 引入的一个装饰器，用于**自动生成类的样板代码**
 
