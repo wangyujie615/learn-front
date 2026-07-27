@@ -30,7 +30,7 @@ class LazySingleton {
 // 线程安全的单例模式
 class LazyThreadSafe {
   private static instance: LazyThreadSafe | null = null;
-  // 加锁
+  // 加锁 使用Promise缓存
   private static initPromise: Promise<LazyThreadSafe> | null = null;
 
   private data: Map<string, any>;
@@ -51,7 +51,7 @@ class LazyThreadSafe {
     // 如果实例已存在，直接返回
     if (LazyThreadSafe.instance) {
       return LazyThreadSafe.instance;
-    }
+    } 
 
     // 如果没有初始化 Promise，创建一个
     if (!LazyThreadSafe.initPromise) {

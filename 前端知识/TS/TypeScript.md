@@ -116,7 +116,7 @@ function mySlice(start?: number,end?: number):void{
 ### 对象类型
 ```typescript
 // 为对象指定类型
-let person:{ name:string; age:number; sayHi():void greet(name:string): void }={
+let person:{ name:string; age:number; sayHi():void; greet(name:string): void }={
   name:'jack',
   age:19,
   sayHi(){},
@@ -637,7 +637,7 @@ f2 = f1;
 ```
 
 ### 交叉类型
-交叉类型(&)：功能类似于接口继承，用于组合多个类型为一个类型(常用于对象类型)
+**交叉类型(&)**：功能类似于接口继承，用于组合多个类型为一个类型(常用于对象类型)
 
 ```typescript
 interface Person{
@@ -693,7 +693,7 @@ const p = id({length:10,name:'wyj'}) //extends满足后序的约束 有length属
 
 //泛型的类型变量有多个
 // 1.两个类型变量用 (,)隔开
-// 2.keyof关键字姐搜一个对象类型，生成其键的名称(可能是字符串或数字)的联合类型
+// 2.keyof关键字接受一个对象类型，生成其键的名称(可能是字符串或数字)的联合类型
 // 对象 对象的键
 function getProp<Type, Key extends keyof Type>(obj: Type, key: Key) {
   return obj[key];
