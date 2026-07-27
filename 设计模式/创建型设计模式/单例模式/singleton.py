@@ -9,6 +9,7 @@ class Singleton:
     @classmethod
     def getInstance(cls, value=None):
         if cls._instance is None:
+            # 如果实例不存在，则创建一个新的实例
             cls._instance = cls(value)
         return cls._instance
     
