@@ -110,6 +110,99 @@ class User:
 | `full()`                              | 判断是否已满（不保证精确） | -                           |
 
 # 基础语法
+## 基本数据类型
+Python3 中有 7 种标准数据类型，以及 bool 布尔类型（bool 是 int 的子类，有时单独列出）：
+
+- Number（数字）
+- String（字符串）
+- bool（布尔类型）
+- List（列表）
+- Tuple（元组）
+- Set（集合）
+- Dictionary（字典）
+
+**不可变数据**（4 个）：Number（数字）、String（字符串）、bool（布尔）、Tuple（元组）
+**可变数据**（3 个）：List（列表）、Dictionary（字典）、Set（集合）
+
+## 推导式
+### 列表推导式
+```
+[表达式 for 变量 in 列表] 
+[out_exp_res for out_exp in input_list]
+
+或者 
+
+[表达式 for 变量 in 列表 if 条件]
+[out_exp_res for out_exp in input_list if condition]
+
+out_exp_res：列表生成元素表达式，可以是有返回值的函数。
+for out_exp in input_list：迭代 input_list 将 out_exp 传入到 out_exp_res 表达式中。
+if condition：条件语句，可以过滤列表中不符合条件的值。
+```
+
+### 字典推导式
+```
+{ key_expr: value_expr for value in collection }
+
+或
+
+{ key_expr: value_expr for value in collection if condition }
+```
+
+### 集合推导式
+```
+{ expression for item in Sequence }
+或
+{ expression for item in Sequence if conditional }
+```
+
+### 元组推导式
+```
+(expression for item in Sequence )
+或
+(expression for item in Sequence if conditional )
+```
+
+## 迭代器和生成器
+迭代是 `Python` 最强大的功能之一，是访问集合元素的一种方式。
+
+**迭代器是一个可以记住遍历的位置的对象。**
+
+迭代器对象从集合的第一个元素开始访问，直到所有的元素被访问完结束。迭代器只能往前不会后退。
+
+迭代器有两个基本的方法：`iter()` 和 `next()`。
+
+`__iter__()` 方法返回一个特殊的迭代器对象， 这个迭代器对象实现了 `__next__()` 方法并通过 StopIteration 异常标识迭代的完成。
+
+`__next__()` 方法（Python 2 里是 next()）会返回下一个迭代器对象。  
+
+## 函数
+``` python
+def functionname( parameters ):
+   "函数_文档字符串"
+   function_suite
+   return [expression]
+
+#可写函数说明
+def printinfo( name, age = 35 ):
+   "打印任何传入的字符串"
+   print "Name: ", name
+   print "Age ", age
+   return
+
+def functionname([formal_args,] *var_args_tuple ):
+   "函数_文档字符串"
+   function_suite
+   return [expression]
+```
+
+python 使用 lambda 来创建匿名函数。
+
+1. lambda只是一个表达式，函数体比def简单很多。
+2. lambda的主体是一个表达式，而不是一个代码块。仅仅能在lambda表达式中封装有限的逻辑进去。
+3. lambda函数拥有自己的命名空间，且不能访问自有参数列表之外或全局命名空间里的参数。
+4. 虽然lambda函数看起来只能写一行，却不等同于C或C++的内联函数，后者的目的是调用小函数时不占用栈内存从而增加运行效率。
+
 
 ## 面向对象
 
@@ -256,11 +349,112 @@ Python不允许实例化的类访问私有数据，但你可以使用 **object._
 
 
 ### `cls` 、`@classmethod`、`@staticmethod`
-- **`cls`（参数）**：它是一个**占位符**，代表“当前调用该方法的类”。在 `@classmethod` 下，无论这个类是被哪个子类调用的，`cls` 都会精准地指向那个子类。
+- **`cls`（参数）**：它是一个**占位符**，代表“当前调用该方法的类”。在 `@classmethod` 下，无论这个类是被哪个子类调用的，`cls` 都会精准地指向那个子类。代表这个类本身（类似 self 代表实例本身）。通过 cls 可以操作类属性（Class Attributes）或调用其他类方法。
     
-- **`@classmethod`（装饰器）**：它是**“灵活的工厂”**。它绑定的是类，而不是实例。它的使命是：**处理类级别的逻辑**，或者**用不同的参数格式来创建该类的对象**（工厂模式）。
+- **`@classmethod`（装饰器）**：它是**灵活的工厂。它绑定的是类，而不是实例。它的使命是：处理类级别的逻辑，或者用不同的参数格式来创建该类的对象**（工厂模式）。
+
+``` python
+class Student:
+    school = "北京大学"  # 类属性
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    # 类方法：接收 cls（类本身）
+    @classmethod
+    def from_string(cls, data_str):
+        """从"姓名-年龄"的字符串中解析并创建对象"""
+        name, age = data_str.split("-")
+        # cls(name, age) 等价于 Student(name, age)，但在继承中更灵活
+        return cls(name, int(age))
+
+    @classmethod
+    def change_school(cls, new_school):
+        """修改类属性"""
+        cls.school = new_school
+
+# 调用方式1：通过类调用
+s1 = Student.from_string("小明-18")
+print(s1.name)  # 输出: 小明
+
+# 调用方式2：通过实例调用（cls 依然指向类，而非实例）
+s2 = Student("小红", 20)
+s2.change_school("清华大学")
+print(Student.school)  # 输出: 清华大学（类属性被改了）
+```
     
-- **`@staticmethod`（装饰器）**：它是**“挂在类里的普通函数”**。它跟类唯一的关联就是**写在类里面**（便于代码组织），但实际上它既不依赖实例，也不依赖类，就像一个独立的小工具。
+- **`@staticmethod`（装饰器）**：它是**挂在类里的普通函数。它跟类唯一的关联就是写在类里面（便于代码组织），但实际上它既不依赖实例，也不依赖类，就像一个独立的小工具**。(静态方法)
+
+
+## 装饰器
+
+装饰器（`Decorator`）本质上是一个高阶函数，它接收一个函数或类作为参数，并返回一个增强后的新版本，整个过程不修改原对象的代码。
+``` python
+import functools
+
+def log(func):
+    @functools.wraps(func)  # 用于保留原函数的元信息（如__name__），这是最佳实践[reference:2]
+    def wrapper(*args, **kwargs):
+        print(f'调用函数: {func.__name__}')  # 增强功能：打印日志
+        return func(*args, **kwargs)        # 调用原始函数
+    return wrapper
+
+# 使用 @ 语法糖
+@log
+def say_hello(name):
+    print(f'Hello, {name}!')
+
+say_hello("World")
+# 输出:
+# 调用函数: say_hello
+# Hello, World!
+
+
+import functools
+
+def log_with_level(level):          # 外层：接收装饰器参数
+    def decorator(func):            # 中层：接收被装饰函数
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs): # 内层：包裹原函数
+            print(f'[{level}] 调用函数: {func.__name__}')
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+# 使用带参数的装饰器
+@log_with_level(level="INFO")
+def greet(name):
+    print(f'Greetings, {name}!')
+
+greet("Alice")
+# 输出:
+# [INFO] 调用函数: greet
+# Greetings, Alice!
+```
+
+``` python
+import functools
+
+class CountCalls:
+    def __init__(self, func):
+        functools.wraps(func)(self)  # 将func的元信息复制给实例自身[reference:9]
+        self.func = func
+        self.count = 0               # 初始化状态：调用计数器
+
+    def __call__(self, *args, **kwargs):
+        self.count += 1              # 每次调用，计数器加1
+        print(f'函数 "{self.func.__name__}" 被调用了 {self.count} 次')
+        return self.func(*args, **kwargs)
+
+@CountCalls
+def test():
+    print("执行测试函数")
+
+test() # 输出: 函数 "test" 被调用了 1 次 \n 执行测试函数
+test() # 输出: 函数 "test" 被调用了 2 次 \n 执行测试函数
+print(f"总调用次数: {test.count}") # 输出: 总调用次数: 2
+```
 
 
 ## 多线程
