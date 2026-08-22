@@ -17,6 +17,7 @@
 | `Callable[[A], B]` | 可调用对象 | `Callable[[int], str]` 表示接受 `int` 返回 `str` 的函数 |     |
 |       `Any`        | 任意类型  |                     跳过类型检查                     |     |
 |   `Sequence[T]`    | 序列类型  |                比 `List` 更通用的抽象                 |     |
+|`Literal`| 字面量类型 | 表示变量**必须是**一组特定字面量值（常量）中的**某一个**| | 
 
 ### dataclasses
 
@@ -108,6 +109,137 @@ class User:
 | `qsize()`                             | 返回队列**大致**大小       | -                           |
 | `empty()`                             | 判断是否为空（不保证精确） | -                           |
 | `full()`                              | 判断是否已满（不保证精确） | -                           |
+
+###  pydantic
+**Pydantic** 是 Python 中最流行的**数据验证和设置管理库**。它利用 Python 的类型注解（Type Hints）在**运行时**自动校验数据是否符合预期格式。
+
+官方文档：https://pydantic.dev/docs/validation/latest/get-started/
+
+---
+基本用法
+```
+from pydantic import BaseModel
+
+# 1. 定义数据模型（就像定义表格结构）
+class User(BaseModel):
+    name: str          # 名字必须是字符串
+    age: int           # 年龄必须是整数
+    email: str         # 邮箱必须是字符串
+
+# 2. 传入数据（Pydantic 自动校验）
+user = User(name="张三", age=25, email="zhangsan@example.com")
+print(user.name)   # 输出: 张三
+print(user.age)    # 输出: 25
+
+# 3. 如果数据不符合规则，会报错
+try:
+    bad_user = User(name="李四", age="不是数字", email="test")
+except Exception as e:
+    print(e)
+    # age: Input should be a valid integer, unable to parse string as an integer
+```
+
+- `BaseModel`：所有 Pydantic 数据模型都必须继承自 `BaseModel`。
+- `ConfigDict`：用于配置模型的行为。
+```
+from pydantic import BaseModel, ConfigDict
+
+class Product(BaseModel):
+    model_config = ConfigDict(
+        # 1. 额外字段处理
+        extra="forbid",  # "forbid": 禁止额外字段, "ignore": 忽略, "allow": 允许
+        
+        # 2. 字段排序
+        json_schema_extra={"examples": [{"name": "示例产品", "price": 99.9}]},
+        
+        # 3. 字符串处理
+        str_strip_whitespace=True,   # 去除空格
+        str_to_lower=False,           # 转小写
+        str_to_upper=False,           # 转大写
+        
+        # 4. 序列化配置
+        populate_by_name=True,        # 允许用字段名或别名访问
+        
+        # 5. 性能相关
+        validate_assignment=True,     # 赋值时也验证
+        extra="ignore",
+    )
+    
+    name: str
+    price: float
+
+# 使用示例
+try:
+    # extra="forbid" 会禁止额外字段
+    p = Product(name="电脑", price=5999, discount=0.1)
+except Exception as e:
+    print(e)  # Extra inputs are not permitted
+```
+- `Field`：为模型中的**单个字段**添加元数据、验证规则、默认值等
+```
+from pydantic import BaseModel, Field
+from typing import List, Optional
+
+class Product(BaseModel):
+    # 1. 默认值
+    name: str = Field(default="未命名产品")
+    
+    # 2. 数值约束
+    price: float = Field(gt=0, le=99999.99, description="价格（必须大于0）")
+    stock: int = Field(ge=0, le=9999)
+    
+    # 3. 字符串约束
+    code: str = Field(min_length=6, max_length=20, pattern=r"^[A-Z0-9]+$")
+    
+    # 4. 列表长度约束
+    tags: List[str] = Field(min_items=0, max_items=10)
+    
+    # 5. 必填（使用 ... 表示必填）
+    product_id: str = Field(..., description="产品ID（必填）")
+    
+    # 6. 可选字段
+    description: Optional[str] = Field(default=None, max_length=500)
+    
+    # 7. 别名（用于 JSON 字段名不同）
+    category: str = Field(alias="category_name")
+    
+    # 8. 示例值（用于生成文档）
+    discount: float = Field(default=0.0, examples=[0.1, 0.2, 0.5])
+
+# 使用别名
+product = Product(
+    product_id="P001",
+    name="手机",
+    price=2999,
+    stock=100,
+    code="PHONE2026",
+    category_name="电子产品"  # 用别名传入
+)
+print(product.category)  # 输出: 电子产品
+```
+- `SecretStr`：用于存储密码、API密钥、Token 等敏感信息，防止意外泄露。
+```
+from pydantic import BaseModel, SecretStr
+
+class User(BaseModel):
+    username: str
+    password: SecretStr  # 敏感字段
+
+user = User(username="admin", password="my_secret_password")
+
+# 直接打印不会暴露真实值
+print(user.password)  
+# 输出: SecretStr('**********')
+
+# 获取真实值（需要显式调用）
+print(user.password.get_secret_value())  
+# 输出: my_secret_password
+
+# 转为字符串也不会泄露
+print(str(user.password))   # **********
+print(repr(user.password))  # SecretStr('**********')
+```
+
 
 # 基础语法
 ## 基本数据类型
