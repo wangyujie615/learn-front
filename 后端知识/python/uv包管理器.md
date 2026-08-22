@@ -2,6 +2,8 @@
 
 uv: 类似有javaScript中的node.js或者maven，一般用于[[python]]语言的包的管理
 
+## uv包管理器的使用
+
 **创建一个新项目**：
 ```
 uv init 项目名称 # 创建一个新项目
